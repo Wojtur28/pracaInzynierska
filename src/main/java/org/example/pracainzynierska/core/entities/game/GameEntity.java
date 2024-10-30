@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.example.pracainzynierska.core.entities.BaseEntity;
 import org.example.pracainzynierska.core.entities.genre.GenreEntity;
 import org.example.pracainzynierska.core.entities.rating.UserGameRating;
+import org.example.pracainzynierska.core.entities.screenshot.ScreenshotEntity;
 import org.example.pracainzynierska.core.entities.theme.ThemeEntity;
 
 import java.util.HashSet;
@@ -20,15 +21,13 @@ import java.util.Set;
 @NoArgsConstructor
 public class GameEntity extends BaseEntity {
 
-    private String title;
-
-    @Enumerated(EnumType.STRING)
-    private GameCategory category;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(unique = true, nullable = false)
     private Long apiId;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
             name = "game_genres",
             joinColumns = @JoinColumn(name = "game_id"),
@@ -36,7 +35,7 @@ public class GameEntity extends BaseEntity {
     )
     private Set<GenreEntity> genres = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
             name = "game_themes",
             joinColumns = @JoinColumn(name = "game_id"),
@@ -46,13 +45,14 @@ public class GameEntity extends BaseEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "game_platforms", joinColumns = @JoinColumn(name = "game_id"))
-    @Column(name = "platform_id")
-    private Set<Platform> platforms = new HashSet<>();
+    @Column(name = "platform_name")
+    private Set<String> platforms = new HashSet<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "game_screenshots", joinColumns = @JoinColumn(name = "game_id"))
-    @Column(name = "screenshot_id")
-    private Set<Integer> screenshots = new HashSet<>();
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<ScreenshotEntity> screenshots = new HashSet<>();
+
+    @Column(name = "api_rating")
+    private double apiRating;
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserGameRating> userRatings = new HashSet<>();

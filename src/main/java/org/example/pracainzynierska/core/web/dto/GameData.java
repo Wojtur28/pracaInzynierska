@@ -1,13 +1,14 @@
 package org.example.pracainzynierska.core.web.dto;
 
+
 import java.util.List;
 
-public record GameResponse(
+public record GameData(
         String name,
         int category,
-        List<String> genres,
-        List<String> themes,
+        List<Genre> genres,
+        List<Theme> themes,
         List<String> screenshots,
         double rating,
-        List<String> platforms
+        List<Platform> platforms
 ) {}

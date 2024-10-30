@@ -1,13 +1,12 @@
 package org.example.pracainzynierska.core.entities.screenshot;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.example.pracainzynierska.core.entities.BaseEntity;
+import org.example.pracainzynierska.core.entities.game.GameEntity;
 
 import java.util.UUID;
 
@@ -29,9 +28,6 @@ public class ScreenshotEntity extends BaseEntity {
     @Column(unique = true)
     private UUID checksum;
 
-    @Column(name = "game_id")
-    private Long gameId;
-
     private int height;
 
     private String imageId;
@@ -39,4 +35,8 @@ public class ScreenshotEntity extends BaseEntity {
     private String url;
 
     private int width;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "game_id", nullable = false)
+    private GameEntity game;
 }

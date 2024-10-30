@@ -33,5 +33,5 @@ public class UserEntity extends BaseEntity {
     Set<Role> roles;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserGameRating> gameRatings = new HashSet<>();
+    private Set<UserGameRating> userGameRatings = new HashSet<>();
 }
