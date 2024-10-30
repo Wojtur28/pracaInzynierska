@@ -20,12 +20,13 @@ public class GameClientApiImpl implements GameClientApi{
     private final String baseUrl = "https://api.igdb.com/v4";
 
     @Override
-    public List<GameResponse> getGamesByTheme(String theme) {
+    public List<GameResponse> getGames() {
         String accessToken = twitchAuthService.getAccessToken();
         HttpHeaders headers = createHeaders(accessToken);
 
-        // Using expander to get detailed information about genres and themes
-        String requestBody = "fields name,genres.*,themes.*; where themes.name = \"" + theme + "\";";
+        String requestBody = "fields name, category, themes, genres, screenshots, rating, platforms;" +
+                "where category = 0 & themes != null & genres != null;";
+        //TODO: Set higher limit
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
@@ -40,7 +41,6 @@ public class GameClientApiImpl implements GameClientApi{
         String accessToken = twitchAuthService.getAccessToken();
         HttpHeaders headers = createHeaders(accessToken);
 
-        // Using expander to retrieve all details of genres and themes
         String requestBody = "fields name,genres.*,themes.*; where id = " + gameId + ";";
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);

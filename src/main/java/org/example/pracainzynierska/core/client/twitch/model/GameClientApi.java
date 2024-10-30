@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface GameClientApi {
 
-    List<GameResponse> getGamesByTheme(String theme);
+    List<GameResponse> getGames();
     GameResponse getGameById(Long gameId);
 
 }

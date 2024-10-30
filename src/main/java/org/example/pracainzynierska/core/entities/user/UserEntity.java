@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.example.pracainzynierska.core.entities.BaseEntity;
-import org.example.pracainzynierska.core.entities.game.GameEntity;
+import org.example.pracainzynierska.core.entities.rating.UserGameRating;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,13 +32,6 @@ public class UserEntity extends BaseEntity {
     @Column(name = "role")
     Set<Role> roles;
 
-
-    @ManyToMany
-    @JoinTable(
-            name = "user_game",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "game_id")
-    )
-    private Set<GameEntity> playedGames = new HashSet<>();
-
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserGameRating> gameRatings = new HashSet<>();
 }

@@ -1,10 +1,11 @@
 package org.example.pracainzynierska.core.web.dto;
 
 import java.util.List;
-import java.util.UUID;
 
-public record GameResponse(UUID id,
+public record GameResponse(Long id,
                            String name,
-                           List<GenreResponse> genres,
-                           List<ThemeResponse> themes) {
+                           List<Long> genres,
+                           List<Long> themes,
+                           List<Long> screenshots,
+                           List<Long> platforms) {
 }

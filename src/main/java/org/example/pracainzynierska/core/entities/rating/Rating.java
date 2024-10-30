@@ -1,4 +1,7 @@
 package org.example.pracainzynierska.core.entities.rating;
 
-public class Rating {
+public enum Rating {
+    LIKE,
+    DISLIKE,
+    SKIP
 }
