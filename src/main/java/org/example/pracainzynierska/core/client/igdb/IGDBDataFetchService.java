@@ -13,6 +13,7 @@ import org.example.pracainzynierska.core.entities.theme.ThemeEntity;
 import org.example.pracainzynierska.core.entities.theme.ThemeRepository;
 import org.example.pracainzynierska.core.mapper.GameMapper;
 import org.example.pracainzynierska.core.web.dto.GameResponse;
+import org.example.pracainzynierska.core.web.dto.MultiQueryGameCountResponse;
 import org.example.pracainzynierska.core.web.dto.MultiQueryResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,118 +49,136 @@ public class IGDBDataFetchService {
         String accessToken = twitchAuthService.getAccessToken();
         HttpHeaders headers = createHeaders(accessToken);
 
-        String requestBody = """
-            query games "Games with Expanded Fields" {
-                fields id,
-                       name,
-                       genres.name,
-                       themes.name,
-                       screenshots.image_id,
-                       rating,
-                       platforms.name;
-                where themes != null & genres != null & themes != 42;
-                limit 500;
-            };
-            """;
+        String countRequestBody = """
+        query games/count "Count of Games" {
+            fields rating, themes, genres;
+            where category = 0 & themes != null & genres != null & themes != 42 & rating != 0;
+        };
+        """;
 
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+        HttpEntity<String> countEntity = new HttpEntity<>(countRequestBody, headers);
 
         try {
-            ResponseEntity<MultiQueryResponse[]> response = restTemplate.exchange(
+            ResponseEntity<MultiQueryGameCountResponse[]> countResponse = restTemplate.exchange(
                     IGDB_BASE_URL + MULTIQUERY_ENDPOINT,
                     HttpMethod.POST,
-                    entity,
-                    MultiQueryResponse[].class
+                    countEntity,
+                    MultiQueryGameCountResponse[].class
             );
 
-            if (response.getBody() != null && response.getBody().length > 0) {
-                MultiQueryResponse multiQueryResponse = response.getBody()[0];
-                List<GameResponse> gameResponses = multiQueryResponse.result();
+            if (countResponse.getBody() != null && countResponse.getBody().length > 0) {
+                MultiQueryGameCountResponse countResult = countResponse.getBody()[0];
+                int totalCount = countResult.count();
+                logger.info("Total games count: {}", totalCount);
 
-                for (GameResponse gameResponse : gameResponses) {
-                    saveOrUpdateGame(gameResponse);
+                int limit = 500;
+                int iterations = (int) Math.ceil((double) totalCount / limit);
+
+                for (int i = 0; i < iterations; i++) {
+                    int offset = i * limit;
+
+                    String gamesRequestBody = String.format("""
+                    query games "Games with Expanded Fields" {
+                        fields id,
+                               name,
+                               genres.name,
+                               themes.name,
+                               screenshots.image_id,
+                               rating,
+                               platforms.name;
+                        where category = 0 & themes != null & genres != null & themes != 42 & rating != 0;
+                        limit %d;
+                        offset %d;
+                    };
+                    """, limit, offset);
+
+                    HttpEntity<String> gamesEntity = new HttpEntity<>(gamesRequestBody, headers);
+
+                    ResponseEntity<MultiQueryResponse[]> gamesResponse = restTemplate.exchange(
+                            IGDB_BASE_URL + MULTIQUERY_ENDPOINT,
+                            HttpMethod.POST,
+                            gamesEntity,
+                            MultiQueryResponse[].class
+                    );
+
+                    if (gamesResponse.getBody() != null && gamesResponse.getBody().length > 0) {
+                        MultiQueryResponse gamesResult = gamesResponse.getBody()[0];
+                        Set<GameResponse> gameResponses = gamesResult.result();
+
+                        for (GameResponse gameResponse : gameResponses) {
+                            saveOrUpdateGame(gameResponse);
+                        }
+                    } else {
+                        logger.warn("No data received from IGDB API at offset {}", offset);
+                        logger.warn("Response status: {}", gamesResponse.getStatusCode());
+                        logger.warn("Response body: {}", gamesResponse.getBody());
+                    }
                 }
             } else {
-                logger.warn("No data received from IGDB API.");
+                logger.warn("No data received from IGDB API for count query.");
+                logger.warn("Response status: {}", countResponse.getStatusCode());
+                logger.warn("Response body: {}", countResponse.getBody());
             }
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            // Handle HTTP errors
             logger.error("HTTP error when calling IGDB API: {}", e.getMessage(), e);
-            // Handle specific status codes if needed
+
         } catch (Exception e) {
-            // Handle other exceptions
             logger.error("Error when calling IGDB API: {}", e.getMessage(), e);
         }
     }
 
     @Transactional
     public void saveOrUpdateGame(GameResponse gameResponse) {
-        // Map GameResponse to GameEntity
-        GameEntity gameEntity = gameMapper.toEntity(gameResponse);
 
-        // Check if the game already exists in the database
         Optional<GameEntity> existingGameOpt = gameRepository.findByApiId(gameResponse.id());
 
+        GameEntity gameEntity;
         if (existingGameOpt.isPresent()) {
-            // If the game exists, set the ID to ensure we're updating the existing record
-            GameEntity existingGame = existingGameOpt.get();
-            gameEntity.setId(existingGame.getId());
+            gameEntity = existingGameOpt.get();
+            gameEntity.setName(gameResponse.name());
+            gameEntity.setApiRating(gameResponse.rating() != null ? gameResponse.rating() : 0.0);
+        } else {
+            gameEntity = gameMapper.toEntity(gameResponse);
+            gameEntity.setApiId(gameResponse.id());
         }
 
-        if (gameEntity.getPlatforms() == null) {
-            gameEntity.setPlatforms(new HashSet<>());
-        }
-        if (gameEntity.getGenres() == null) {
-            gameEntity.setGenres(new HashSet<>());
-        }
-        if (gameEntity.getThemes() == null) {
-            gameEntity.setThemes(new HashSet<>());
-        }
-        if (gameEntity.getScreenshots() == null) {
-            gameEntity.setScreenshots(new HashSet<>());
-        }
-
-        // Process Genres
         Set<GenreEntity> linkedGenres = gameEntity.getGenres().stream()
                 .map(genre -> {
                     Optional<GenreEntity> existingGenreOpt = genreRepository.findByApiId(genre.getApiId());
                     if (existingGenreOpt.isPresent()) {
-                        return existingGenreOpt.get(); // Managed entity
+                        return existingGenreOpt.get();
                     } else {
-                        return genreRepository.save(genre); // Persist new genre
+                        return genreRepository.save(genre);
                     }
                 })
                 .collect(Collectors.toSet());
         gameEntity.setGenres(linkedGenres);
 
-        // Process Themes
         Set<ThemeEntity> linkedThemes = gameEntity.getThemes().stream()
                 .map(theme -> {
                     Optional<ThemeEntity> existingThemeOpt = themeRepository.findByApiId(theme.getApiId());
                     if (existingThemeOpt.isPresent()) {
-                        return existingThemeOpt.get(); // Managed entity
+                        return existingThemeOpt.get();
                     } else {
-                        return themeRepository.save(theme); // Persist new theme
+                        return themeRepository.save(theme);
                     }
                 })
                 .collect(Collectors.toSet());
         gameEntity.setThemes(linkedThemes);
 
-        // Process Platforms
         Set<PlatformEntity> linkedPlatforms = gameEntity.getPlatforms().stream()
                 .map(platform -> {
                     Optional<PlatformEntity> existingPlatformOpt = platformRepository.findByApiId(platform.getApiId());
                     if (existingPlatformOpt.isPresent()) {
-                        return existingPlatformOpt.get(); // Managed entity
+                        return existingPlatformOpt.get();
                     } else {
-                        return platformRepository.save(platform); // Persist new platform
+                        return platformRepository.save(platform);
                     }
                 })
                 .collect(Collectors.toSet());
         gameEntity.setPlatforms(linkedPlatforms);
 
-        // Process Screenshots (keep cascading if appropriate)
         Set<ScreenshotEntity> linkedScreenshots = Optional.ofNullable(gameEntity.getScreenshots())
                 .orElse(Collections.emptySet())
                 .stream()
@@ -167,18 +186,16 @@ public class IGDBDataFetchService {
                     Optional<ScreenshotEntity> existingScreenshotOpt = screenshotRepository.findByApiId(screenshot.getApiId());
                     if (existingScreenshotOpt.isPresent()) {
                         ScreenshotEntity existingScreenshot = existingScreenshotOpt.get();
-                        existingScreenshot.setGame(gameEntity); // Update reference
+                        existingScreenshot.setGame(gameEntity);
                         return existingScreenshot;
                     } else {
-                        screenshot.setGame(gameEntity); // Set reference for new screenshot
+                        screenshot.setGame(gameEntity);
                         return screenshot;
                     }
                 })
                 .collect(Collectors.toSet());
         gameEntity.setScreenshots(linkedScreenshots);
 
-
-        // Save the game entity to the database
         gameRepository.save(gameEntity);
     }
 

@@ -13,7 +13,7 @@ public class ScheduledDataFetcher {
 
     private final IGDBDataFetchService igdbDataFetchService;
 
-    @Scheduled(cron = "1 * * * * ?")
+    @Scheduled(cron = "0 */5 * * * *")
     public void updateGameData() {
         igdbDataFetchService.fetchAndSaveGames();
     }

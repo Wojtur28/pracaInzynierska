@@ -8,10 +8,10 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ThemeMapper {
 
-    @Mapping(target = "id", ignore = true)           // UUID primary key
-    @Mapping(target = "apiId", source = "id")        // Map the API ID from DTO to entity
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "apiId", source = "id")
     ThemeEntity toEntity(GameResponse.Theme theme);
 
-    @Mapping(target = "id", source = "apiId")        // Map the API ID from entity to DTO
+    @Mapping(target = "id", source = "apiId")
     GameResponse.Theme toDto(ThemeEntity themeEntity);
 }

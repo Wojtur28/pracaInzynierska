@@ -53,7 +53,6 @@ public class GameEntity extends BaseEntity {
     )
     private Set<PlatformEntity> platforms = new HashSet<>();
 
-    //@JsonManagedReference
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<ScreenshotEntity> screenshots = new HashSet<>();
 

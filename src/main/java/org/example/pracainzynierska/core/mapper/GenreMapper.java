@@ -8,10 +8,10 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface GenreMapper {
 
-    @Mapping(target = "id", ignore = true)           // UUID primary key
-    @Mapping(target = "apiId", source = "id")        // Map the API ID from DTO to entity
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "apiId", source = "id")
     GenreEntity toEntity(GameResponse.Genre genre);
 
-    @Mapping(target = "id", source = "apiId")        // Map the API ID from entity to DTO
+    @Mapping(target = "id", source = "apiId")
     GameResponse.Genre toDto(GenreEntity genreEntity);
 }

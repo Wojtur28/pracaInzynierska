@@ -9,10 +9,10 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface PlatformMapper {
 
-    @Mapping(target = "id", ignore = true)            // UUID primary key
-    @Mapping(target = "apiId", source = "id")         // Map the API ID from DTO to entity
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "apiId", source = "id")
     PlatformEntity toEntity(GameResponse.Platform platform);
 
-    @Mapping(target = "id", source = "apiId")         // Map the API ID from entity to DTO
+    @Mapping(target = "id", source = "apiId")
     GameResponse.Platform toDto(PlatformEntity platformEntity);
 }
