@@ -4,5 +4,5 @@ import java.util.Set;
 
 public record MultiQueryResponse(
         String name,
-        Set<GameResponse> result
+        Set<Game> result
 ) {}

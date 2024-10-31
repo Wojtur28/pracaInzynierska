@@ -1,7 +1,7 @@
 package org.example.pracainzynierska.core.mapper;
 
 import org.example.pracainzynierska.core.entities.genre.GenreEntity;
-import org.example.pracainzynierska.core.web.dto.GameResponse;
+import org.example.pracainzynierska.core.web.dto.Game;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -10,8 +10,8 @@ public interface GenreMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "apiId", source = "id")
-    GenreEntity toEntity(GameResponse.Genre genre);
+    GenreEntity toEntity(Game.Genre genre);
 
     @Mapping(target = "id", source = "apiId")
-    GameResponse.Genre toDto(GenreEntity genreEntity);
+    Game.Genre toDto(GenreEntity genreEntity);
 }

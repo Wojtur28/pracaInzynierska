@@ -1,4 +1,4 @@
-package org.example.pracainzynierska.core.client.igdb;
+package org.example.pracainzynierska.core.igdb;
 
 import lombok.RequiredArgsConstructor;
 import org.example.pracainzynierska.core.entities.game.GameEntity;
@@ -12,7 +12,7 @@ import org.example.pracainzynierska.core.entities.screenshot.ScreenshotRepositor
 import org.example.pracainzynierska.core.entities.theme.ThemeEntity;
 import org.example.pracainzynierska.core.entities.theme.ThemeRepository;
 import org.example.pracainzynierska.core.mapper.GameMapper;
-import org.example.pracainzynierska.core.web.dto.GameResponse;
+import org.example.pracainzynierska.core.web.dto.Game;
 import org.example.pracainzynierska.core.web.dto.MultiQueryGameCountResponse;
 import org.example.pracainzynierska.core.web.dto.MultiQueryResponse;
 import org.slf4j.Logger;
@@ -34,8 +34,8 @@ public class IGDBDataFetchService {
     private final RestTemplate restTemplate;
     private final GameRepository gameRepository;
     private final GameMapper gameMapper;
-    private final TwitchAuthService twitchAuthService;
-    private final TwitchConfig twitchConfig;
+    private final IGDBAuthService IGDBAuthService;
+    private final IGDBConfig IGDBConfig;
     private final GenreRepository genreRepository;
     private final ThemeRepository themeRepository;
     private final ScreenshotRepository screenshotRepository;
@@ -46,7 +46,7 @@ public class IGDBDataFetchService {
     private static final String MULTIQUERY_ENDPOINT = "/multiquery";
 
     public void fetchAndSaveGames() {
-        String accessToken = twitchAuthService.getAccessToken();
+        String accessToken = IGDBAuthService.getAccessToken();
         HttpHeaders headers = createHeaders(accessToken);
 
         String countRequestBody = """
@@ -103,10 +103,10 @@ public class IGDBDataFetchService {
 
                     if (gamesResponse.getBody() != null && gamesResponse.getBody().length > 0) {
                         MultiQueryResponse gamesResult = gamesResponse.getBody()[0];
-                        Set<GameResponse> gameResponses = gamesResult.result();
+                        Set<Game> gameRespons = gamesResult.result();
 
-                        for (GameResponse gameResponse : gameResponses) {
-                            saveOrUpdateGame(gameResponse);
+                        for (Game game : gameRespons) {
+                            saveOrUpdateGame(game);
                         }
                     } else {
                         logger.warn("No data received from IGDB API at offset {}", offset);
@@ -129,18 +129,18 @@ public class IGDBDataFetchService {
     }
 
     @Transactional
-    public void saveOrUpdateGame(GameResponse gameResponse) {
+    public void saveOrUpdateGame(Game game) {
 
-        Optional<GameEntity> existingGameOpt = gameRepository.findByApiId(gameResponse.id());
+        Optional<GameEntity> existingGameOpt = gameRepository.findByApiId(game.id());
 
         GameEntity gameEntity;
         if (existingGameOpt.isPresent()) {
             gameEntity = existingGameOpt.get();
-            gameEntity.setName(gameResponse.name());
-            gameEntity.setApiRating(gameResponse.rating() != null ? gameResponse.rating() : 0.0);
+            gameEntity.setName(game.name());
+            gameEntity.setApiRating(game.rating() != null ? game.rating() : 0.0);
         } else {
-            gameEntity = gameMapper.toEntity(gameResponse);
-            gameEntity.setApiId(gameResponse.id());
+            gameEntity = gameMapper.toEntity(game);
+            gameEntity.setApiId(game.id());
         }
 
         Set<GenreEntity> linkedGenres = gameEntity.getGenres().stream()
@@ -202,7 +202,7 @@ public class IGDBDataFetchService {
     private HttpHeaders createHeaders(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
-        headers.set("Client-ID", twitchConfig.getClientId());
+        headers.set("Client-ID", IGDBConfig.getClientId());
         headers.setContentType(MediaType.TEXT_PLAIN);
         return headers;
     }

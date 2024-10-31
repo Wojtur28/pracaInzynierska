@@ -2,7 +2,7 @@ package org.example.pracainzynierska.core.mapper;
 
 
 import org.example.pracainzynierska.core.entities.platform.PlatformEntity;
-import org.example.pracainzynierska.core.web.dto.GameResponse;
+import org.example.pracainzynierska.core.web.dto.Game;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -11,8 +11,8 @@ public interface PlatformMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "apiId", source = "id")
-    PlatformEntity toEntity(GameResponse.Platform platform);
+    PlatformEntity toEntity(Game.Platform platform);
 
     @Mapping(target = "id", source = "apiId")
-    GameResponse.Platform toDto(PlatformEntity platformEntity);
+    Game.Platform toDto(PlatformEntity platformEntity);
 }

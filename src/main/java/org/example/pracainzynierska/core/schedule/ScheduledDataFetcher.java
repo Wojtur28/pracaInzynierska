@@ -1,7 +1,7 @@
 package org.example.pracainzynierska.core.schedule;
 
 import lombok.RequiredArgsConstructor;
-import org.example.pracainzynierska.core.client.igdb.IGDBDataFetchService;
+import org.example.pracainzynierska.core.igdb.IGDBDataFetchService;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

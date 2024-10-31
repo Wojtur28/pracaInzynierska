@@ -2,7 +2,7 @@ package org.example.pracainzynierska.core.web.dto;
 
 import java.util.List;
 
-public record GameResponse(
+public record Game(
         Long id,
         String name,
         List<Genre> genres,
