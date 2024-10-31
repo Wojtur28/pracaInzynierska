@@ -1,4 +1,6 @@
 package org.example.pracainzynierska.core.web.dto;
 
-public record GameClientRequest() {
+public record Screenshot(
+        String id
+) {
 }

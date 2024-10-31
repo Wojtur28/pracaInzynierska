@@ -1,5 +1,6 @@
 package org.example.pracainzynierska.core.entities.screenshot;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +11,7 @@ import org.example.pracainzynierska.core.entities.game.GameEntity;
 
 import java.util.UUID;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "screenshots")
 @Data
@@ -30,13 +31,29 @@ public class ScreenshotEntity extends BaseEntity {
 
     private int height;
 
+    @Column(nullable = false)
     private String imageId;
 
     private String url;
 
     private int width;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "game_id", nullable = false)
     private GameEntity game;
+
+    @Override
+    public String toString() {
+        return "ScreenshotEntity{" +
+                "width=" + width +
+                ", url='" + url + '\'' +
+                ", imageId='" + imageId + '\'' +
+                ", height=" + height +
+                ", checksum=" + checksum +
+                ", animated=" + animated +
+                ", alphaChannel=" + alphaChannel +
+                ", apiId=" + apiId +
+                '}';
+    }
 }

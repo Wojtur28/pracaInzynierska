@@ -11,7 +11,7 @@ import org.example.pracainzynierska.core.entities.BaseEntity;
 
 import java.util.UUID;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "genres")
 @Data
@@ -20,6 +20,7 @@ import java.util.UUID;
 public class GenreEntity extends BaseEntity {
 
     @Column(unique = true, nullable = false)
+    @EqualsAndHashCode.Include
     private Long apiId;
 
     private String name;

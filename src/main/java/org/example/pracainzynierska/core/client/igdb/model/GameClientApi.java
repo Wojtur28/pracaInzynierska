@@ -1,4 +1,4 @@
-package org.example.pracainzynierska.core.client.twitch.model;
+package org.example.pracainzynierska.core.client.igdb.model;
 
 import org.example.pracainzynierska.core.web.dto.GameResponse;
 
@@ -7,6 +7,7 @@ import java.util.List;
 public interface GameClientApi {
 
     List<GameResponse> getGames();
-    GameResponse getGameById(Long gameId);
+
+    //CompletableFuture<List<GameResponse>> getGamesAsync();
 
 }

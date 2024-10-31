@@ -1,8 +1,8 @@
-package org.example.pracainzynierska.core.client.twitch.model;
+package org.example.pracainzynierska.core.client.igdb.model;
 
 import lombok.AllArgsConstructor;
-import org.example.pracainzynierska.core.client.twitch.TwitchAuthService;
-import org.example.pracainzynierska.core.client.twitch.TwitchConfig;
+import org.example.pracainzynierska.core.client.igdb.TwitchAuthService;
+import org.example.pracainzynierska.core.client.igdb.TwitchConfig;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;

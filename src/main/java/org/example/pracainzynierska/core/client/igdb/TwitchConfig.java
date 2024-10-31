@@ -1,4 +1,4 @@
-package org.example.pracainzynierska.core.client.twitch;
+package org.example.pracainzynierska.core.client.igdb;
 
 import lombok.Getter;
 import lombok.Setter;

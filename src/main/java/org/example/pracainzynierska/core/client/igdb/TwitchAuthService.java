@@ -1,6 +1,5 @@
-package org.example.pracainzynierska.core.client.twitch;
+package org.example.pracainzynierska.core.client.igdb;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -43,7 +42,6 @@ public class TwitchAuthService {
     }
 
     private boolean isTokenExpired() {
-
-        return false;
+        return this.expires_in <= 0;
     }
 }

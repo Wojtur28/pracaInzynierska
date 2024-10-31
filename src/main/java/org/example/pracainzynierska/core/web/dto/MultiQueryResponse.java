@@ -4,5 +4,5 @@ import java.util.List;
 
 public record MultiQueryResponse(
         String name,
-        List<GameData> result
+        List<GameResponse> result
 ) {}
