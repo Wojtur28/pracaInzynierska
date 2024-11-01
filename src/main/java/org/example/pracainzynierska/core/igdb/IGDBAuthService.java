@@ -1,7 +1,7 @@
-package org.example.pracainzynierska.core.client.twitch;
+package org.example.pracainzynierska.core.igdb;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.example.pracainzynierska.core.web.dto.TokenResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,23 +13,22 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class TwitchAuthService {
+public class IGDBAuthService {
 
-    private final TwitchConfig twitchConfig;
+    private final IGDBConfig IGDBConfig;
     private final RestTemplate restTemplate;
-    private String accessToken;
-    private int expires_in;
+    private TokenResponse tokenResponse;
 
     public String getAccessToken() {
-        if (accessToken == null || isTokenExpired()) {
+        if (tokenResponse == null || isTokenExpired()) {
             refreshToken();
         }
-        return accessToken;
+        return tokenResponse.accessToken();
     }
 
     private void refreshToken() {
-        String url = "https://id.twitch.tv/oauth2/token?client_id=" + twitchConfig.getClientId() +
-                "&client_secret=" + twitchConfig.getClientSecret() +
+        String url = "https://id.twitch.tv/oauth2/token?client_id=" + IGDBConfig.getClientId() +
+                "&client_secret=" + IGDBConfig.getClientSecret() +
                 "&grant_type=client_credentials";
 
         ResponseEntity<Map> response = restTemplate.exchange(
@@ -37,13 +36,14 @@ public class TwitchAuthService {
 
         Map<String, Object> body = response.getBody();
         if (body != null && body.containsKey("access_token")) {
-            this.accessToken = (String) body.get("access_token");
-            this.expires_in = (int) body.get("expires_in");
+            this.tokenResponse = new TokenResponse(
+                    (String) body.get("access_token"),
+                    (int) body.get("expires_in")
+            );
         }
     }
 
     private boolean isTokenExpired() {
-
-        return false;
+        return tokenResponse != null && tokenResponse.expiresIn() <= 0;
     }
 }
