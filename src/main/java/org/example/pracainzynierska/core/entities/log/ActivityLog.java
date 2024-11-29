@@ -1,4 +1,4 @@
-package org.example.pracainzynierska.core.entities.gameRating;
+package org.example.pracainzynierska.core.entities.log;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -9,28 +9,23 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.example.pracainzynierska.core.entities.BaseEntity;
 import org.example.pracainzynierska.core.entities.user.UserEntity;
-import org.example.pracainzynierska.core.entities.steam.SteamGameEntity;
+
+import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
-@Entity(name = "game_ratings")
+@Entity(name = "activity_logs")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GameRatingEntity extends BaseEntity {
-
-    @ManyToOne
-    @JoinColumn(name = "steam_games_id")
-    private SteamGameEntity steamGames ;
+public class ActivityLog extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    private Integer rating;
+    private LocalDateTime executionTime;
 
-    private String content;
+    private String method;
 
-    private int votesUp;
-
-    private int votesDown;
+    private String endpoint;
 }

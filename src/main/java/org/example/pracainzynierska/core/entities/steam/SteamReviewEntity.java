@@ -1,12 +1,10 @@
-package org.example.pracainzynierska.core.steam;
+package org.example.pracainzynierska.core.entities.steam;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -15,13 +13,12 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode
 @Table(name = "steam_reviews")
 public class SteamReviewEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @EqualsAndHashCode.Include
     private UUID id;
 
     @Column(name = "review_id", unique = true, nullable = false)
@@ -41,6 +38,7 @@ public class SteamReviewEntity {
     private Integer score;
 
     @Column(name = "timestamp_created", nullable = false)
+    @EqualsAndHashCode.Exclude
     private LocalDateTime timestampCreated;
 
     @Column(name = "votes_up", nullable = false)
@@ -53,11 +51,4 @@ public class SteamReviewEntity {
     @JoinColumn(name = "steam_user_id")
     private SteamUserEntity steamUser;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
 }
