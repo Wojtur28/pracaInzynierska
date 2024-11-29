@@ -1,15 +1,12 @@
-package org.example.pracainzynierska.core.steam;
+package org.example.pracainzynierska.core.entities.steam;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -18,7 +15,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode
 @Table(name = "steam_games", indexes = {
         @Index(name = "idx_app_id", columnList = "app_id")
 })
@@ -26,7 +23,6 @@ public class SteamGameEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @EqualsAndHashCode.Include
     private UUID id;
 
     @Column(name = "app_id", unique = true, nullable = false)
@@ -42,6 +38,7 @@ public class SteamGameEntity {
     private String reviewsScoreFancy;
 
     @Column(name = "release_date", nullable = false)
+    @EqualsAndHashCode.Exclude
     private LocalDate releaseDate;
 
     @Column(name = "launch_price", nullable = false)
@@ -52,14 +49,6 @@ public class SteamGameEntity {
 
     @Column(name = "steam_page", nullable = false)
     private String steamPage;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<SteamReviewEntity> steamReviews = new HashSet<>();
