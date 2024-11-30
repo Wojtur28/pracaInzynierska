@@ -1,10 +1,12 @@
-package org.example.pracainzynierska.core.entities.steam;
+package org.example.pracainzynierska.core.entities.steam.game;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.example.pracainzynierska.core.entities.steam.review.SteamReviewEntity;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -51,6 +53,23 @@ public class SteamGameEntity {
     private String steamPage;
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @EqualsAndHashCode.Exclude
     private Set<SteamReviewEntity> steamReviews = new HashSet<>();
+
+    @Override
+    public String toString() {
+        return "SteamGameEntity{" +
+                "steamPage='" + steamPage + '\'' +
+                ", tags='" + tags + '\'' +
+                ", launchPrice='" + launchPrice + '\'' +
+                ", releaseDate=" + releaseDate +
+                ", reviewsScoreFancy='" + reviewsScoreFancy + '\'' +
+                ", reviewsTotal=" + reviewsTotal +
+                ", title='" + title + '\'' +
+                ", appId=" + appId +
+                ", id=" + id +
+                '}';
+    }
 }
 

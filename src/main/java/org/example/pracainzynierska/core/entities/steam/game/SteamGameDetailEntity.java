@@ -1,4 +1,4 @@
-package org.example.pracainzynierska.core.entities.steam;
+package org.example.pracainzynierska.core.entities.steam.game;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package org.example.pracainzynierska.core.config;
+package org.example.pracainzynierska.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.example.pracainzynierska.core.entities.BaseEntity;
 import org.example.pracainzynierska.core.entities.gameRating.GameRatingEntity;
-import org.example.pracainzynierska.core.entities.steam.SteamGameEntity;
+import org.example.pracainzynierska.core.entities.steam.game.SteamGameEntity;
 import org.example.pracainzynierska.core.entities.user.UserEntity;
 
 import java.time.LocalDate;

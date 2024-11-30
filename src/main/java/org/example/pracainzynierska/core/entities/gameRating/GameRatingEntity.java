@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.example.pracainzynierska.core.entities.BaseEntity;
 import org.example.pracainzynierska.core.entities.user.UserEntity;
-import org.example.pracainzynierska.core.entities.steam.SteamGameEntity;
+import org.example.pracainzynierska.core.entities.steam.game.SteamGameEntity;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity(name = "game_ratings")

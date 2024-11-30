@@ -1,10 +1,11 @@
-package org.example.pracainzynierska.core.entities.steam;
+package org.example.pracainzynierska.core.entities.steam.user;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.example.pracainzynierska.core.entities.steam.review.SteamReviewEntity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,6 +26,15 @@ public class SteamUserEntity {
     private String steamId;
 
     @OneToMany(mappedBy = "steamUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
     private Set<SteamReviewEntity> steamReviews = new HashSet<>();
+
+    @Override
+    public String toString() {
+        return "SteamUserEntity{" +
+                "id=" + id +
+                ", steamId='" + steamId + '\'' +
+                '}';
+    }
 }
 

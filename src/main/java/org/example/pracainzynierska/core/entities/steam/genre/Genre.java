@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.example.pracainzynierska.core.entities.steam.SteamGameDetailEntity;
+import org.example.pracainzynierska.core.entities.steam.game.SteamGameDetailEntity;
 
 import java.util.UUID;
 
