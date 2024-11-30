@@ -14,15 +14,15 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class GetGameReviewsUseCase {
+public class GetSteamGameReviewsUseCase {
 
 
     private final SteamReviewRepository steamReviewRepository;
     private final SteamReviewMapper steamReviewMapper;
 
-    public List<SteamReview> getGameReviews(String gameId, Integer page, Integer size) {
+    public List<SteamReview> getGameReviews(UUID gameId, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<SteamReview> steamReviews = steamReviewRepository.findByGameId(UUID.fromString(gameId), pageable)
+        Page<SteamReview> steamReviews = steamReviewRepository.findByGameId(gameId, pageable)
                 .map(steamReviewMapper::toModel);
 
         return steamReviews.getContent();

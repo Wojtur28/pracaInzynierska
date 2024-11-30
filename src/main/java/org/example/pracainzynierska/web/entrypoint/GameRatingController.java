@@ -1,0 +1,28 @@
+package org.example.pracainzynierska.web.entrypoint;
+
+import com.example.api.GameRatingsApi;
+import com.example.model.GameRating;
+import lombok.AllArgsConstructor;
+import org.example.pracainzynierska.core.usecase.GetGameRatingsUseCase;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@AllArgsConstructor
+public class GameRatingController implements GameRatingsApi {
+
+    private final GetGameRatingsUseCase getGameRatingsUseCase;
+
+    @Override
+    public ResponseEntity<List<GameRating>> getGameRatings(
+            @PathVariable("gameId") UUID gameId,
+            @RequestParam Integer page,
+            @RequestParam Integer size) {
+        return ResponseEntity.ok(getGameRatingsUseCase.getGameRatings(gameId, page, size));
+    }
+}
