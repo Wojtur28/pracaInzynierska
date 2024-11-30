@@ -1,4 +1,4 @@
-package org.example.pracainzynierska.core.usecase;
+package org.example.pracainzynierska.core.usecase.rating;
 
 import com.example.model.GameRating;
 import lombok.AllArgsConstructor;
