@@ -11,23 +11,76 @@ servers:
 tags:
   - name: user
     description: User operations
+  - name: SteamGames
+    description: Steam games operations
+  - name: SteamReviews
+    description: Steam reviews operations
 
 paths:
   /games:
     get:
-      summary: Retrieve all Steam games
+      summary: Retrieve paginated list of Steam games
       operationId: getSteamGames
       tags:
         - SteamGames
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
       responses:
         '200':
-          description: List of Steam games
+          description: Paginated list of Steam games
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/SteamGame'
+
+  /games/{gameId}/reviews:
+    get:
+      summary: Retrieve paginated reviews for a specific game
+      operationId: getGameReviews
+      tags:
+        - SteamReviews
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page index (zero-based).
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Paginated list of reviews for the specified game
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SteamReview'
 
 components:
 #  securitySchemes:
@@ -75,10 +128,6 @@ components:
           type: string
         steamPage:
           type: string
-        steamReviews:
-          type: array
-          items:
-            $ref: '#/components/schemas/SteamReview'
 
     SteamReview:
       type: object
@@ -116,8 +165,6 @@ components:
           type: integer
           description: Number of downvotes for the review.
           example: 5
-        steamUser:
-          $ref: '#/components/schemas/SteamUser'
 
     SteamUser:
       type: object
