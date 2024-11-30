@@ -1,10 +1,13 @@
-package org.example.pracainzynierska.core.entities.steam;
+package org.example.pracainzynierska.core.entities.steam.review;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.example.pracainzynierska.core.entities.steam.game.SteamGameEntity;
+import org.example.pracainzynierska.core.entities.steam.user.SteamUserEntity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -23,10 +26,6 @@ public class SteamReviewEntity {
 
     @Column(name = "review_id", unique = true, nullable = false)
     private String reviewId;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "app_id", nullable = false)
-    private SteamGameEntity game;
 
     @Column(name = "user_steam_id", nullable = false)
     private String userSteamId;
@@ -49,6 +48,26 @@ public class SteamReviewEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "steam_user_id")
+    @EqualsAndHashCode.Exclude
     private SteamUserEntity steamUser;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "app_id", referencedColumnName = "app_id", nullable = false)
+    @JsonBackReference
+    @EqualsAndHashCode.Exclude
+    private SteamGameEntity game;
+
+    @Override
+    public String toString() {
+        return "SteamReviewEntity{" +
+                "userSteamId='" + userSteamId + '\'' +
+                ", content='" + content + '\'' +
+                ", score=" + score +
+                ", timestampCreated=" + timestampCreated +
+                ", votesUp=" + votesUp +
+                ", votesDown=" + votesDown +
+                ", reviewId='" + reviewId + '\'' +
+                ", id=" + id +
+                '}';
+    }
 }

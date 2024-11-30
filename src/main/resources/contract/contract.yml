@@ -1,0 +1,137 @@
+openapi: 3.0.0
+info:
+  title: PracaInzynierska
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local server
+
+
+tags:
+  - name: user
+    description: User operations
+
+paths:
+  /games:
+    get:
+      summary: Retrieve all Steam games
+      operationId: getSteamGames
+      tags:
+        - SteamGames
+      responses:
+        '200':
+          description: List of Steam games
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SteamGame'
+
+components:
+#  securitySchemes:
+#    bearerAuth:
+#      type: http
+#      scheme: bearer
+#      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        gender:
+          type: string
+        age:
+          type: integer
+
+    SteamGame:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        appId:
+          type: integer
+        title:
+          type: string
+        reviewsTotal:
+          type: integer
+        reviewsScoreFancy:
+          type: string
+        releaseDate:
+          type: string
+          format: date
+        launchPrice:
+          type: string
+        tags:
+          type: string
+        steamPage:
+          type: string
+        steamReviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/SteamReview'
+
+    SteamReview:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the review.
+        reviewId:
+          type: string
+          description: Unique Steam review ID.
+          example: "r12345"
+        userSteamId:
+          type: string
+          description: Steam ID of the user who wrote the review.
+          example: "76561198000000000"
+        content:
+          type: string
+          description: Content of the review.
+          example: "Amazing game with great mechanics!"
+        score:
+          type: integer
+          description: Score given by the user in the review.
+          example: 10
+        timestampCreated:
+          type: string
+          format: date-time
+          description: Timestamp when the review was created.
+          example: "2023-11-29T15:30:00"
+        votesUp:
+          type: integer
+          description: Number of upvotes for the review.
+          example: 120
+        votesDown:
+          type: integer
+          description: Number of downvotes for the review.
+          example: 5
+        steamUser:
+          $ref: '#/components/schemas/SteamUser'
+
+    SteamUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the Steam user.
+        steamId:
+          type: string
+          description: Unique Steam ID of the user.
+          example: "76561198000000000"
+        steamReviews:
+          type: array
+          description: List of reviews written by the user.
+          items:
+            $ref: '#/components/schemas/SteamReview'
