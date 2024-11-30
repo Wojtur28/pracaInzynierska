@@ -38,5 +38,6 @@ public class UserEntity extends BaseEntity {
 
     private LocalDate dateOfBirth;
 
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 }

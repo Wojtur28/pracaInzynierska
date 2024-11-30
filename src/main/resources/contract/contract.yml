@@ -87,6 +87,35 @@ paths:
                   $ref: '#/components/schemas/GameRating'
         '404':
           description: Steam game not found
+    post:
+      summary: Create a new rating for a game
+      operationId: createGameRating
+      tags:
+        - GameRatings
+      parameters:
+        - name: gameId
+          in: path
+          description: The ID of the game to rate
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Rating details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGameRating'
+      responses:
+        '201':
+          description: Rating successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameRating'
+        '404':
+          description: Game not found
 
   /games/{gameId}/reviews:
     get:
@@ -296,3 +325,23 @@ components:
           type: integer
           description: Number of downvotes for this rating.
           example: 2
+
+    CreateGameRating:
+      type: object
+      properties:
+        steamGameId:
+          type: string
+          format: uuid
+          description: The ID of the Steam game to rate.
+        userId:
+          type: string
+          format: uuid
+          description: The ID of the user creating the rating.
+        rating:
+          type: integer
+          description: Rating score (1-10).
+          example: 8
+        content:
+          type: string
+          description: User's review content.
+          example: "Great game!"

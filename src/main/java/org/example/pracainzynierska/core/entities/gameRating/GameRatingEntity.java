@@ -18,14 +18,6 @@ import org.example.pracainzynierska.core.entities.steam.game.SteamGameEntity;
 @NoArgsConstructor
 public class GameRatingEntity extends BaseEntity {
 
-    @ManyToOne
-    @JoinColumn(name = "steam_games_id")
-    private SteamGameEntity steamGame ;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
-
     private Integer rating;
 
     private String content;
@@ -33,4 +25,12 @@ public class GameRatingEntity extends BaseEntity {
     private int votesUp;
 
     private int votesDown;
+
+    @ManyToOne
+    @JoinColumn(name = "steam_games_id")
+    private SteamGameEntity steamGame ;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 }
