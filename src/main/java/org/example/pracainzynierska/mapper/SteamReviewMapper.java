@@ -11,12 +11,10 @@ import java.util.List;
 public interface SteamReviewMapper {
 
     @Mapping(source = "timestampCreated", target = "timestampCreated", qualifiedByName = "localDateTimeToOffsetDateTime")
-    @Mapping(target = "steamUser", ignore = true) // Ignorowanie mapowania steamUser
     SteamReview toModel(SteamReviewEntity steamReviewEntity);
 
     @Mapping(source = "timestampCreated", target = "timestampCreated", qualifiedByName = "offsetDateTimeToLocalDateTime")
-    @Mapping(target = "steamUser", ignore = true) // Ignorowanie mapowania steamUser
-    @Mapping(target = "game", ignore = true) // Ignorowanie mapowania game
+    @Mapping(target = "game", ignore = true)
     SteamReviewEntity toEntity(SteamReview steamReview);
 
     List<SteamReview> toModel(List<SteamReviewEntity> steamReviewEntities);
