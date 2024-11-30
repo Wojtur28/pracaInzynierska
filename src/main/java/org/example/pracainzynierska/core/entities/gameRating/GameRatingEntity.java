@@ -20,7 +20,7 @@ public class GameRatingEntity extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "steam_games_id")
-    private SteamGameEntity steamGames ;
+    private SteamGameEntity steamGame ;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

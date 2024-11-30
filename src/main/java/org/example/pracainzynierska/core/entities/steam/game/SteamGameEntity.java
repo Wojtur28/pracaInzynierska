@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.example.pracainzynierska.core.entities.gameRating.GameRatingEntity;
 import org.example.pracainzynierska.core.entities.steam.review.SteamReviewEntity;
 
 import java.time.LocalDate;
@@ -56,6 +57,11 @@ public class SteamGameEntity {
     @JsonManagedReference
     @EqualsAndHashCode.Exclude
     private Set<SteamReviewEntity> steamReviews = new HashSet<>();
+
+    @OneToMany(mappedBy = "steamGame", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @EqualsAndHashCode.Exclude
+    private Set<GameRatingEntity> gameRatings = new HashSet<>();
 
     @Override
     public String toString() {

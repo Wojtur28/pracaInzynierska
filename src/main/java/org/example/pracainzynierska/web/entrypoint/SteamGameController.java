@@ -21,4 +21,6 @@ public class SteamGameController implements SteamGamesApi {
         return ResponseEntity.ok(getSteamGamesUseCase.getSteamGames(page, size));
     }
 
+
+
 }

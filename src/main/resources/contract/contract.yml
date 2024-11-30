@@ -15,6 +15,8 @@ tags:
     description: Steam games operations
   - name: SteamReviews
     description: Steam reviews operations
+  - name: GameRatings
+    description: Game ratings operations
 
 paths:
   /games:
@@ -46,6 +48,46 @@ paths:
                 items:
                   $ref: '#/components/schemas/SteamGame'
 
+  /games/{gameId}/ratings:
+    get:
+      summary: Retrieve paginated game ratings for a specific Steam game
+      operationId: getGameRatings
+      tags:
+        - GameRatings
+      parameters:
+        - name: gameId
+          in: path
+          description: ID of the Steam game to retrieve ratings for
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          description: The page index (zero-based).
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Paginated list of game ratings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GameRating'
+        '404':
+          description: Steam game not found
+
   /games/{gameId}/reviews:
     get:
       summary: Retrieve paginated reviews for a specific game
@@ -58,6 +100,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
         - name: page
           in: query
           description: The page index (zero-based).
@@ -129,6 +172,49 @@ components:
         steamPage:
           type: string
 
+    SteamGameDetails:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the Steam game.
+        appId:
+          type: integer
+          description: Unique Steam App ID of the game.
+        title:
+          type: string
+          description: Title of the Steam game.
+        reviewsTotal:
+          type: integer
+          description: Total number of reviews for the game.
+        reviewsScoreFancy:
+          type: string
+          description: Fancy representation of the review score.
+        releaseDate:
+          type: string
+          format: date
+          description: Release date of the game.
+        launchPrice:
+          type: string
+          description: Launch price of the game.
+        tags:
+          type: string
+          description: Comma-separated tags for the game.
+        steamPage:
+          type: string
+          description: URL to the Steam store page for the game.
+        steamReviews:
+          type: array
+          description: List of reviews for the game.
+          items:
+            $ref: '#/components/schemas/SteamReview'
+        gameRatings:
+          type: array
+          description: List of ratings for the game.
+          items:
+            $ref: '#/components/schemas/GameRating'
+
     SteamReview:
       type: object
       properties:
@@ -182,3 +268,31 @@ components:
           description: List of reviews written by the user.
           items:
             $ref: '#/components/schemas/SteamReview'
+
+    GameRating:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the rating.
+        steamGame:
+          $ref: '#/components/schemas/SteamGame'
+        user:
+          $ref: '#/components/schemas/User'
+        rating:
+          type: integer
+          description: The rating score given by the user.
+          example: 8
+        content:
+          type: string
+          description: Additional comments provided by the user.
+          example: "Great game, had a lot of fun!"
+        votesUp:
+          type: integer
+          description: Number of upvotes for this rating.
+          example: 15
+        votesDown:
+          type: integer
+          description: Number of downvotes for this rating.
+          example: 2
