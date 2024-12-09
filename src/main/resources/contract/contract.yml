@@ -155,11 +155,11 @@ paths:
                   $ref: '#/components/schemas/SteamReview'
 
 components:
-#  securitySchemes:
-#    bearerAuth:
-#      type: http
-#      scheme: bearer
-#      bearerFormat: JWT
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     User:
       type: object
@@ -174,8 +174,9 @@ components:
           type: string
         gender:
           type: string
-        age:
-          type: integer
+        dateOfBirth:
+          type: string
+          format: date
 
     SteamGame:
       type: object
