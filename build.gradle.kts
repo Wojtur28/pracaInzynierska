@@ -49,7 +49,11 @@ dependencies {
     annotationProcessor ("org.mapstruct:mapstruct-processor:1.6.2")
     implementation("org.projectlombok:lombok-mapstruct-binding:0.2.0")
     swaggerCodegen("io.swagger.codegen.v3:swagger-codegen-cli:3.0.47")
-
+    implementation("io.swagger.core.v3:swagger-models-jakarta:2.2.26")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
     // dependencies for swagger-codegen
     implementation("io.gsonfire:gson-fire:1.9.0")
     implementation("javax.annotation:javax.annotation-api:1.3.2")
