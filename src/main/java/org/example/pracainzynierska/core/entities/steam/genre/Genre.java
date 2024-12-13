@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.example.pracainzynierska.core.entities.steam.game.SteamGameDetailEntity;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity(name = "genres")
@@ -20,9 +22,10 @@ public class Genre {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "steam_game_detail_entity_id")
-    private SteamGameDetailEntity steamGameDetailEntity;
-
+    @Column(unique = true, nullable = false)
     private String description;
+
+    @ManyToMany(mappedBy = "genres")
+    private Set<SteamGameDetailEntity> steamGameDetails = new HashSet<>();
 }
+
