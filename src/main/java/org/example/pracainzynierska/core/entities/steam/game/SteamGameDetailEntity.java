@@ -17,48 +17,41 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class SteamGameDetailEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @EqualsAndHashCode.Include
     private UUID id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "steam_game_entity_id")
+    @EqualsAndHashCode.Exclude
     private SteamGameEntity steamGameEntity;
 
-    @Lob
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = "TEXT")
     private String headerImage;
 
-    @Lob
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = "TEXT")
     private String capsuleImage;
 
-    @Lob
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = "TEXT")
     private String website;
 
-    @Lob
-    @Column(columnDefinition = "text")
     private String developer;
 
-    @Lob
-    @Column(columnDefinition = "text")
     private String publisher;
 
-    private int requiredAge; //from String ex. "18"
+    private int requiredAge;
 
-    @Lob
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = "TEXT")
     private String shortDescription;
 
-    @Lob
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = "TEXT")
     private String supportedLanguages;
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "steam_game_details_categories",
             joinColumns = @JoinColumn(name = "steam_game_detail_entity_id"),
@@ -66,7 +59,7 @@ public class SteamGameDetailEntity {
     )
     private Set<Category> categories = new HashSet<>();
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "steam_game_details_genres",
             joinColumns = @JoinColumn(name = "steam_game_detail_entity_id"),
@@ -77,4 +70,3 @@ public class SteamGameDetailEntity {
     @OneToMany(mappedBy = "steamGameDetailEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Platform> platforms = new HashSet<>();
 }
-

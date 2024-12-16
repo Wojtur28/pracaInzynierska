@@ -1,5 +1,6 @@
 package org.example.pracainzynierska.core.entities.steam.platform;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,18 +14,21 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Platform {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "steam_game_detail_entity_id")
+    @EqualsAndHashCode.Exclude
+    @JsonBackReference
     private SteamGameDetailEntity steamGameDetailEntity;
 
-    private String platformName;
+    private String name;
 
     private Boolean isSupport;
 }
