@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Category {
+public class CategoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

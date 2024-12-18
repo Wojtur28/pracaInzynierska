@@ -213,6 +213,28 @@ paths:
           schema:
             type: string
             description: Filter games by platform
+        - name: categories
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            description: Filter games by categories
+        - name: genres
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            description: Filter games by genres
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+            description: Search games by title
       responses:
         '200':
           description: Paginated list of Steam games with details
@@ -222,6 +244,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SteamGameWithDetails'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal Server Error
 
 
 components:

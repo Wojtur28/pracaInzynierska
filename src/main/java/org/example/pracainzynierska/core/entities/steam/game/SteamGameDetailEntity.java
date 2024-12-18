@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.example.pracainzynierska.core.entities.steam.category.Category;
-import org.example.pracainzynierska.core.entities.steam.genre.Genre;
-import org.example.pracainzynierska.core.entities.steam.platform.Platform;
+import org.example.pracainzynierska.core.entities.steam.category.CategoryEntity;
+import org.example.pracainzynierska.core.entities.steam.genre.GenreEntity;
+import org.example.pracainzynierska.core.entities.steam.platform.PlatformEntity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -57,7 +57,7 @@ public class SteamGameDetailEntity {
             joinColumns = @JoinColumn(name = "steam_game_detail_entity_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    private Set<Category> categories = new HashSet<>();
+    private Set<CategoryEntity> categories = new HashSet<>();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -65,8 +65,8 @@ public class SteamGameDetailEntity {
             joinColumns = @JoinColumn(name = "steam_game_detail_entity_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private Set<Genre> genres = new HashSet<>();
+    private Set<GenreEntity> genres = new HashSet<>();
 
     @OneToMany(mappedBy = "steamGameDetailEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Platform> platforms = new HashSet<>();
+    private Set<PlatformEntity> platforms = new HashSet<>();
 }

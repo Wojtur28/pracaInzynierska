@@ -4,8 +4,10 @@ import com.example.model.SteamGameWithDetails;
 import lombok.AllArgsConstructor;
 import org.example.pracainzynierska.core.entities.steam.game.SteamGameEntity;
 import org.example.pracainzynierska.core.entities.steam.game.SteamGameRepository;
+import org.example.pracainzynierska.core.specification.SteamGameSpecifications;
 import org.example.pracainzynierska.mapper.SteamGameWithDetailsMapper;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,15 +20,17 @@ public class GetSteamGamesWithDetails {
     private final SteamGameRepository steamGameRepository;
     private final SteamGameWithDetailsMapper steamGameWithDetailsMapper;
 
-    public List<SteamGameWithDetails> getSteamGamesWithDetails(int page, int size, String platform) {
+    public List<SteamGameWithDetails> getSteamGamesWithDetails(int page, int size, String platform, List<String> categories, List<String> genres, String search) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        List<SteamGameEntity> games;
 
-        if (platform != null && !platform.isEmpty()) {
-            games = steamGameRepository.findBySteamGameDetailEntityPlatformsName(platform, pageRequest);
-        } else {
-            games = steamGameRepository.findAll(pageRequest).getContent();
-        }
+        platform = platform != null ? platform.toLowerCase() : null;
+
+        Specification<SteamGameEntity> spec = Specification.where(SteamGameSpecifications.hasPlatform(platform))
+                .and(SteamGameSpecifications.hasCategories(categories))
+                .and(SteamGameSpecifications.hasGenres(genres))
+                .and(SteamGameSpecifications.hasName(search));
+
+        List<SteamGameEntity> games = steamGameRepository.findAll(spec, pageRequest).getContent();
 
         return games.stream()
                 .map(steamGameWithDetailsMapper::toDto)
