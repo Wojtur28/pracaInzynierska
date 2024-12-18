@@ -1,26 +1,42 @@
 package org.example.pracainzynierska.web.entrypoint;
 
+import com.example.model.SteamGameDetail;
+import com.example.model.SteamGameWithDetails;
 import lombok.AllArgsConstructor;
+import org.example.pracainzynierska.core.usecase.steam.GetSteamGameDetailsUseCase;
 import org.example.pracainzynierska.core.usecase.steam.GetSteamGamesUseCase;
+import org.example.pracainzynierska.core.usecase.steam.GetSteamGamesWithDetails;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.api.SteamGamesApi;
 import com.example.model.SteamGame;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
 public class SteamGameController implements SteamGamesApi {
 
     private final GetSteamGamesUseCase getSteamGamesUseCase;
+    private final GetSteamGameDetailsUseCase getSteamGameDetailsUseCase;
+    private final GetSteamGamesWithDetails getSteamGamesWithDetails;
 
     @Override
     public ResponseEntity<List<SteamGame>> getSteamGames(@RequestParam Integer page, @RequestParam Integer size) {
         return ResponseEntity.ok(getSteamGamesUseCase.getSteamGames(page, size));
     }
 
+    @Override
+    public ResponseEntity<SteamGameDetail> getSteamGameDetail(@PathVariable("gameId") UUID steamGameId) {
+        return ResponseEntity.ok(getSteamGameDetailsUseCase.getSteamGameDetail(steamGameId));
+    }
 
+    @Override
+    public ResponseEntity<List<SteamGameWithDetails>> getSteamGamesWithDetails(@RequestParam Integer page, @RequestParam Integer size, @RequestParam(required = false) String platform, @RequestParam(required = false) List<String> categories, @RequestParam(required = false) List<String> genres, @RequestParam(required = false) String search) {
+        return ResponseEntity.ok(getSteamGamesWithDetails.getSteamGamesWithDetails(page, size, platform, categories, genres, search));
+    }
 
 }

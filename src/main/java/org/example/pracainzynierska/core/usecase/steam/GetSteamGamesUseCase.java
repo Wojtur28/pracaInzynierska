@@ -20,7 +20,7 @@ public class GetSteamGamesUseCase {
     public List<SteamGame> getSteamGames(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<SteamGame> steamGames = steamGameRepository.findAll(pageable)
-                .map(steamGameMapper::toModel);
+                .map(steamGameMapper::toDto);
 
         return steamGames.getContent();
     }

@@ -1,5 +1,6 @@
-package org.example.pracainzynierska.core.entities.steam.genre;
+package org.example.pracainzynierska.core.entities.steam.category;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,21 +12,23 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Entity(name = "genres")
+@Entity(name = "categories")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
-public class Genre {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class CategoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @Column(unique = true, nullable = false)
-    private String description;
+    private String name;
 
-    @ManyToMany(mappedBy = "genres")
+    @ManyToMany(mappedBy = "categories")
+    @EqualsAndHashCode.Exclude
+    @JsonBackReference
     private Set<SteamGameDetailEntity> steamGameDetails = new HashSet<>();
 }
-

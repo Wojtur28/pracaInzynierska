@@ -8,7 +8,6 @@ import org.example.pracainzynierska.config.security.dto.SignUpUser;
 import org.example.pracainzynierska.core.entities.user.Role;
 import org.example.pracainzynierska.core.entities.user.UserEntity;
 import org.example.pracainzynierska.core.entities.user.UserRepository;
-import org.example.pracainzynierska.mapper.UserMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +22,6 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final UserMapper userMapper;
 
     public SignUpResponse signup(SignUpUser input) {
         userRepository.findByEmail(input.email())
@@ -40,7 +38,7 @@ public class AuthenticationService {
         user.setGender(input.gender());
         user.setDateOfBirth(input.dateOfBirth());
 
-        UserEntity savedUser = userRepository.save(user);
+        userRepository.save(user);
         return new SignUpResponse("User created successfully");
     }
 

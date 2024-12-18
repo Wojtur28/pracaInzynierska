@@ -12,11 +12,11 @@ import java.util.List;
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SteamGameMapper {
 
-    SteamGame toModel(SteamGameEntity steamGameEntity);
+    SteamGame toDto(SteamGameEntity steamGameEntity);
 
     SteamGameEntity toEntity(SteamGame steamGame);
 
-    List<SteamGame> toModel(List<SteamGameEntity> steamGameEntities);
+    List<SteamGame> toDto(List<SteamGameEntity> steamGameEntities);
 
     List<SteamGameEntity> toEntity(List<SteamGame> steamGames);
 
