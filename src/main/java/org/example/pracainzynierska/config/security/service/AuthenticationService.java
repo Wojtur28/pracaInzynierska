@@ -8,6 +8,7 @@ import org.example.pracainzynierska.config.security.dto.SignUpUser;
 import org.example.pracainzynierska.core.entities.user.Role;
 import org.example.pracainzynierska.core.entities.user.UserEntity;
 import org.example.pracainzynierska.core.entities.user.UserRepository;
+import org.example.pracainzynierska.exception.UserAlreadyExistsException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,10 +25,9 @@ public class AuthenticationService {
     private final JwtService jwtService;
 
     public SignUpResponse signup(SignUpUser input) {
-        userRepository.findByEmail(input.email())
-                .ifPresent(user -> {
-                    throw new RuntimeException("User with this email already exists");
-                });
+        if (userRepository.findByEmail(input.email()).isPresent()) {
+            throw new UserAlreadyExistsException("User with this email already exists");
+        }
 
         UserEntity user = new UserEntity();
         user.setEmail(input.email());
