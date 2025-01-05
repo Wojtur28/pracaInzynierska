@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.example.pracainzynierska.core.entities.steam.ScreenshotEntity;
 import org.example.pracainzynierska.core.entities.steam.category.CategoryEntity;
 import org.example.pracainzynierska.core.entities.steam.genre.GenreEntity;
 import org.example.pracainzynierska.core.entities.steam.platform.PlatformEntity;
@@ -69,4 +70,8 @@ public class SteamGameDetailEntity {
 
     @OneToMany(mappedBy = "steamGameDetailEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PlatformEntity> platforms = new HashSet<>();
+
+    @OneToMany(mappedBy = "steamGameDetailEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ScreenshotEntity> screenshots = new HashSet<>();
+
 }

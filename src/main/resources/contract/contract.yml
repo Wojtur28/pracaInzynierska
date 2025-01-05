@@ -50,6 +50,32 @@ paths:
                 items:
                   $ref: '#/components/schemas/SteamGame'
 
+  /games/{gameId}:
+    get:
+      summary: Retrieve a specific Steam game by ID
+      operationId: getSteamGame
+      tags:
+        - SteamGames
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: gameId
+          in: path
+          description: ID of the Steam game to retrieve
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Steam game details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SteamGame'
+        '404':
+          description: Steam game not found
+
   /games/{gameId}/ratings:
     get:
       summary: Retrieve paginated game ratings for a specific Steam game
@@ -80,6 +106,14 @@ paths:
           schema:
             type: integer
             default: 10
+        - name: sort
+          in: query
+          description: Sort order for the ratings (asc or desc).
+          required: false
+          schema:
+            type: string
+            enum: [ asc, desc ]
+            default: desc
       responses:
         '200':
           description: Paginated list of game ratings
@@ -251,6 +285,136 @@ paths:
         '500':
           description: Internal Server Error
 
+  /ratings/{ratingId}/answers:
+    get:
+      summary: Retrieve answers for a specific game rating
+      operationId: getGameRatingAnswers
+      tags:
+        - GameRatingAnswers
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: ratingId
+          in: path
+          description: ID of the rating to retrieve answers for.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of answers for the specified rating
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GameRatingAnswer'
+        '404':
+          description: Rating not found
+
+    post:
+      summary: Add an answer to a specific game rating
+      operationId: createGameRatingAnswer
+      tags:
+        - GameRatingAnswers
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: ratingId
+          in: path
+          description: ID of the rating to add an answer to.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Answer details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGameRatingAnswer'
+      responses:
+        '201':
+          description: Answer successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameRatingAnswer'
+        '404':
+          description: Rating not found
+
+  /ratings/{ratingId}/vote:
+    patch:
+      summary: Vote on a game rating (upvote or downvote)
+      operationId: voteOnGameRating
+      tags:
+        - GameRatings
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: ratingId
+          in: path
+          description: ID of the game rating to vote on.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Vote details (upvote or downvote)
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoteRequest'
+      responses:
+        '200':
+          description: Successfully updated the vote count for the game rating
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameRating'
+        '404':
+          description: Game rating not found
+        '400':
+          description: Invalid vote type
+
+  /ratings/answers/{answerId}/vote:
+    patch:
+      summary: Vote on a game rating answer (upvote or downvote)
+      operationId: voteOnGameRatingAnswer
+      tags:
+        - GameRatingAnswers
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: answerId
+          in: path
+          description: ID of the game rating answer to vote on.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Vote details (upvote or downvote)
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/VoteRequest'
+      responses:
+        '200':
+          description: Successfully updated the vote count for the game rating answer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameRatingAnswer'
+        '404':
+          description: Game rating answer not found
+        '400':
+          description: Invalid vote type
+
 
 components:
   securitySchemes:
@@ -356,6 +520,25 @@ components:
           description: List of platforms supported by the game.
           items:
             $ref: '#/components/schemas/Platform'
+        screenshots:
+          type: array
+          description: List of screenshots associated with the game.
+          items:
+            $ref: '#/components/schemas/Screenshot'
+
+    Screenshot:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the screenshot.
+        pathThumbnail:
+          type: string
+          description: URL to the thumbnail version of the screenshot.
+        pathFull:
+          type: string
+          description: URL to the full-size version of the screenshot.
 
     Category:
       type: object
@@ -474,18 +657,15 @@ components:
           type: integer
           description: Number of downvotes for this rating.
           example: 2
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the rating was created.
+          example: "2023-11-29T15:30:00"
 
     CreateGameRating:
       type: object
       properties:
-        steamGameId:
-          type: string
-          format: uuid
-          description: The ID of the Steam game to rate.
-        userId:
-          type: string
-          format: uuid
-          description: The ID of the user creating the rating.
         rating:
           type: integer
           description: Rating score (1-10).
@@ -494,6 +674,51 @@ components:
           type: string
           description: User's review content.
           example: "Great game!"
+
+    GameRatingAnswer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the answer.
+        gameRating:
+          $ref: '#/components/schemas/GameRating'
+        user:
+          $ref: '#/components/schemas/User'
+        content:
+          type: string
+          description: Content of the answer.
+          example: "I totally agree with this review!"
+        votesUp:
+          type: integer
+          description: Number of upvotes for this answer.
+          example: 5
+        votesDown:
+          type: integer
+          description: Number of downvotes for this answer.
+          example: 2
+        createdAt:
+            type: string
+            format: date-time
+            description: Timestamp when the answer was created.
+            example: "2023-11-29T15:30:00"
+
+    CreateGameRatingAnswer:
+      type: object
+      properties:
+        content:
+          type: string
+          description: Content of the answer.
+
+    VoteRequest:
+      type: object
+      properties:
+        voteType:
+          type: string
+          description: Type of vote (up or down).
+          enum: [ UP, DOWN ]
+          example: UP
 
     SteamGameWithDetails:
       allOf:

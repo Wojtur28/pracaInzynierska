@@ -3,6 +3,8 @@ package org.example.pracainzynierska.core.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.example.pracainzynierska.core.entities.user.UserEntity;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,6 +19,8 @@ import java.util.UUID;
 @EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Data
+@Getter
+@Setter
 public abstract class BaseEntity {
 
     @Id
@@ -26,7 +30,7 @@ public abstract class BaseEntity {
 
     @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "createdBy")
+    @JoinColumn(name = "createdBy", nullable = false)
     @EqualsAndHashCode.Exclude
     private UserEntity createdBy;
 
