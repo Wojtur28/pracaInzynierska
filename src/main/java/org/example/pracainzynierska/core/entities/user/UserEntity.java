@@ -43,7 +43,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @Column(name = "role")
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<GameRatingEntity> userGameRatingEntities = new HashSet<>();
 
     @Override

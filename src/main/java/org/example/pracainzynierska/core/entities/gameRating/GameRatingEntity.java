@@ -16,7 +16,7 @@ import org.example.pracainzynierska.core.entities.steam.game.SteamGameEntity;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GameRatingEntity extends BaseEntity {
+public class GameRatingEntity extends BaseEntity implements VotableEntity {
 
     private Integer rating;
 

@@ -4,6 +4,7 @@ import com.example.model.SteamGameDetail;
 import com.example.model.SteamGameWithDetails;
 import lombok.AllArgsConstructor;
 import org.example.pracainzynierska.core.usecase.steam.GetSteamGameDetailsUseCase;
+import org.example.pracainzynierska.core.usecase.steam.GetSteamGameUseCase;
 import org.example.pracainzynierska.core.usecase.steam.GetSteamGamesUseCase;
 import org.example.pracainzynierska.core.usecase.steam.GetSteamGamesWithDetails;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class SteamGameController implements SteamGamesApi {
     private final GetSteamGamesUseCase getSteamGamesUseCase;
     private final GetSteamGameDetailsUseCase getSteamGameDetailsUseCase;
     private final GetSteamGamesWithDetails getSteamGamesWithDetails;
+    private final GetSteamGameUseCase getSteamGameUseCase;
 
     @Override
     public ResponseEntity<List<SteamGame>> getSteamGames(@RequestParam Integer page, @RequestParam Integer size) {
@@ -30,13 +32,18 @@ public class SteamGameController implements SteamGamesApi {
     }
 
     @Override
-    public ResponseEntity<SteamGameDetail> getSteamGameDetail(@PathVariable("gameId") UUID steamGameId) {
-        return ResponseEntity.ok(getSteamGameDetailsUseCase.getSteamGameDetail(steamGameId));
+    public ResponseEntity<SteamGameDetail> getSteamGameDetail(@PathVariable("gameId") UUID gameId) {
+        return ResponseEntity.ok(getSteamGameDetailsUseCase.getSteamGameDetail(gameId));
     }
 
     @Override
     public ResponseEntity<List<SteamGameWithDetails>> getSteamGamesWithDetails(@RequestParam Integer page, @RequestParam Integer size, @RequestParam(required = false) String platform, @RequestParam(required = false) List<String> categories, @RequestParam(required = false) List<String> genres, @RequestParam(required = false) String search) {
         return ResponseEntity.ok(getSteamGamesWithDetails.getSteamGamesWithDetails(page, size, platform, categories, genres, search));
+    }
+
+    @Override
+    public ResponseEntity<SteamGame> getSteamGame(@PathVariable("gameId") UUID gameId) {
+        return ResponseEntity.ok(getSteamGameUseCase.getSteamGame(gameId));
     }
 
 }

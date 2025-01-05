@@ -15,7 +15,7 @@ import org.example.pracainzynierska.core.entities.user.UserEntity;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GameRatingAnswerEntity extends BaseEntity {
+public class GameRatingAnswerEntity extends BaseEntity implements VotableEntity {
 
     @ManyToOne
     @JoinColumn(name = "game_rating_entity_id")

@@ -28,12 +28,12 @@ import org.springframework.web.client.RestTemplate;
 @EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 public class ApplicationConfig {
 
+    private final UserRepository userRepository;
+
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
-
-    private final UserRepository userRepository;
 
     @Bean
     public AuditorAware<UserEntity> auditorProvider() {
