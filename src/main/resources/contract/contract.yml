@@ -7,7 +7,6 @@ servers:
   - url: http://localhost:8080
     description: Local server
 
-
 tags:
   - name: user
     description: User operations
@@ -17,6 +16,10 @@ tags:
     description: Steam reviews operations
   - name: GameRatings
     description: Game ratings operations
+  - name: GameRatingAnswers
+    description: Game rating answers operations
+  - name: Votes
+    description: Voting operations
 
 paths:
   /games:
@@ -220,6 +223,7 @@ paths:
                 $ref: '#/components/schemas/SteamGameDetail'
         '404':
           description: Steam game not found
+
   /games/details:
     get:
       summary: Retrieve paginated list of Steam games with details
@@ -345,18 +349,18 @@ paths:
         '404':
           description: Rating not found
 
-  /ratings/{ratingId}/vote:
+  /votes/ratings/{ratingId}:
     patch:
-      summary: Vote on a game rating (upvote or downvote)
+      summary: Vote on a game rating
       operationId: voteOnGameRating
       tags:
-        - GameRatings
+        - Votes
       security:
         - bearerAuth: [ ]
       parameters:
         - name: ratingId
           in: path
-          description: ID of the game rating to vote on.
+          description: ID of the game rating to vote on
           required: true
           schema:
             type: string
@@ -367,31 +371,27 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VoteRequest'
+              $ref: '#/components/schemas/Vote'
       responses:
         '200':
-          description: Successfully updated the vote count for the game rating
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GameRating'
+          description: Successfully voted on the game rating
         '404':
           description: Game rating not found
         '400':
           description: Invalid vote type
 
-  /ratings/answers/{answerId}/vote:
+  /votes/answers/{answerId}:
     patch:
-      summary: Vote on a game rating answer (upvote or downvote)
+      summary: Vote on a game rating answer
       operationId: voteOnGameRatingAnswer
       tags:
-        - GameRatingAnswers
+        - Votes
       security:
         - bearerAuth: [ ]
       parameters:
         - name: answerId
           in: path
-          description: ID of the game rating answer to vote on.
+          description: ID of the game rating answer to vote on
           required: true
           schema:
             type: string
@@ -402,14 +402,64 @@ paths:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/VoteRequest'
+              $ref: '#/components/schemas/Vote'
       responses:
         '200':
-          description: Successfully updated the vote count for the game rating answer
+          description: Successfully voted on the game rating answer
+        '404':
+          description: Game rating answer not found
+        '400':
+          description: Invalid vote type
+
+  /votes/ratings/{ratingId}/count:
+    get:
+      summary: Get vote counts for a game rating
+      operationId: getVotesForGameRating
+      tags:
+        - Votes
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: ratingId
+          in: path
+          description: ID of the game rating to retrieve vote counts for
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Vote counts for the game rating
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GameRatingAnswer'
+                $ref: '#/components/schemas/VoteCount'
+        '404':
+          description: Game rating not found
+
+  /votes/answers/{answerId}/count:
+    get:
+      summary: Get vote counts for a game rating answer
+      operationId: getVotesForGameRatingAnswer
+      tags:
+        - Votes
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: answerId
+          in: path
+          description: ID of the game rating answer to retrieve vote counts for
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Vote counts for the game rating answer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VoteCount'
         '404':
           description: Game rating answer not found
         '400':
@@ -699,10 +749,10 @@ components:
           description: Number of downvotes for this answer.
           example: 2
         createdAt:
-            type: string
-            format: date-time
-            description: Timestamp when the answer was created.
-            example: "2023-11-29T15:30:00"
+          type: string
+          format: date-time
+          description: Timestamp when the answer was created.
+          example: "2023-11-29T15:30:00"
 
     CreateGameRatingAnswer:
       type: object
@@ -711,14 +761,23 @@ components:
           type: string
           description: Content of the answer.
 
-    VoteRequest:
+    Vote:
       type: object
       properties:
-        voteType:
-          type: string
-          description: Type of vote (up or down).
-          enum: [ UP, DOWN ]
-          example: UP
+          voteType:
+            type: string
+            description: Type of the vote (upvote or downvote).
+            example: upvote
+
+    VoteCount:
+      type: object
+      properties:
+        downvotes:
+          type: integer
+          description: Number of downvotes
+        upvotes:
+          type: integer
+          description: Number of upvotes.
 
     SteamGameWithDetails:
       allOf:

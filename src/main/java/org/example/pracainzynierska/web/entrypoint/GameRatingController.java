@@ -3,11 +3,9 @@ package org.example.pracainzynierska.web.entrypoint;
 import com.example.api.GameRatingsApi;
 import com.example.model.CreateGameRating;
 import com.example.model.GameRating;
-import com.example.model.VoteRequest;
 import lombok.AllArgsConstructor;
 import org.example.pracainzynierska.core.usecase.rating.CreateGameRatingUseCase;
 import org.example.pracainzynierska.core.usecase.rating.GetGameRatingsUseCase;
-import org.example.pracainzynierska.core.usecase.rating.PatchRatingUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +21,6 @@ public class GameRatingController implements GameRatingsApi {
 
     private final GetGameRatingsUseCase getGameRatingsUseCase;
     private final CreateGameRatingUseCase createGameRatingUseCase;
-    private final PatchRatingUseCase patchRatingUseCase;
 
     @Override
     public ResponseEntity<List<GameRating>> getGameRatings(
@@ -41,12 +38,5 @@ public class GameRatingController implements GameRatingsApi {
         return ResponseEntity.ok(createGameRatingUseCase.createRating(gameId, createGameRating));
     }
 
-    @Override
-    public ResponseEntity<GameRating> voteOnGameRating(
-            @PathVariable("ratingId") UUID ratingId,
-            @RequestBody VoteRequest voteRequest) {
-        GameRating updatedRating = patchRatingUseCase.voteOnGameRating(ratingId, voteRequest.getVoteType().toString());
-        return ResponseEntity.ok(updatedRating);
-    }
 
 }

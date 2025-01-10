@@ -8,21 +8,22 @@ import lombok.NoArgsConstructor;
 import org.example.pracainzynierska.core.entities.BaseEntity;
 import org.example.pracainzynierska.core.entities.user.UserEntity;
 
+import java.util.UUID;
+
 @EqualsAndHashCode(callSuper = true)
-@Entity(name = "game_ratings_answers")
+@Entity(name = "votes")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GameRatingAnswerEntity extends BaseEntity {
+public class VoteEntity extends BaseEntity {
+
+    @Enumerated(EnumType.STRING)
+    private VoteType voteType;
 
     @ManyToOne
-    @JoinColumn(name = "game_rating_entity_id")
-    private GameRatingEntity gameRatingEntity;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    private String content;
-
+    @Column(name = "votable_id", nullable = false)
+    private UUID votableId;
 }

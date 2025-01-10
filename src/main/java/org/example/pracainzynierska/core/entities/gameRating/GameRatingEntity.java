@@ -1,8 +1,6 @@
 package org.example.pracainzynierska.core.entities.gameRating;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,21 +14,18 @@ import org.example.pracainzynierska.core.entities.steam.game.SteamGameEntity;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GameRatingEntity extends BaseEntity implements VotableEntity {
+public class GameRatingEntity extends BaseEntity {
 
     private Integer rating;
 
     private String content;
 
-    private int votesUp;
-
-    private int votesDown;
-
     @ManyToOne
     @JoinColumn(name = "steam_games_id")
-    private SteamGameEntity steamGame ;
+    private SteamGameEntity steamGame;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
 }
+
