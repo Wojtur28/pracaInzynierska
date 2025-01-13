@@ -13,6 +13,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
@@ -33,8 +34,10 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateToken(UserDetails userDetails, UUID userId) {
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("userId", userId.toString());
+        return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
@@ -107,4 +110,10 @@ public class JwtService {
     public String extractEmail(String token) {
         return extractClaim(token, claims -> claims.get("email", String.class));
     }
+
+    public UUID extractUserId(String token) {
+        String userId = extractClaim(token, claims -> claims.get("userId", String.class));
+        return UUID.fromString(userId);
+    }
+
 }

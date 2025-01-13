@@ -1,5 +1,6 @@
 package org.example.pracainzynierska.mapper;
 
+import org.example.pracainzynierska.core.entities.user.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 
@@ -21,17 +22,32 @@ public interface BaseMapper {
         return offsetDateTime != null ? offsetDateTime.toLocalDateTime() : null;
     }
 
-    default UUID map(java.lang.String value){
+    default UUID stringToUuid(java.lang.String value){
         if(value == null || value.isEmpty()){
             return null;
         }
         return UUID.fromString(value);
     }
 
-    default String map(UUID uuid){
+    default String uuidToString(UUID uuid){
         if(uuid!=null) {
             return uuid.toString();
         }
         return null;
+    }
+
+    @Named("userEntityToUuid")
+    default UUID userEntityToUuid(UserEntity userEntity) {
+        return userEntity != null ? userEntity.getId() : null;
+    }
+
+    @Named("uuidToUserEntity")
+    default UserEntity uuidToUserEntity(UUID uuid) {
+        if (uuid == null) {
+            return null;
+        }
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(uuid);
+        return userEntity;
     }
 }
