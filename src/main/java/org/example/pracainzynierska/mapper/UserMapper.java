@@ -2,6 +2,7 @@ package org.example.pracainzynierska.mapper;
 
 import com.example.model.User;
 import org.example.pracainzynierska.core.entities.user.Gender;
+import org.example.pracainzynierska.core.entities.user.Role;
 import org.example.pracainzynierska.core.entities.user.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -29,5 +30,10 @@ public interface UserMapper {
     @Named("mapStringToGender")
     default Gender mapStringToGender(String gender) {
         return gender != null ? Gender.valueOf(gender) : null;
+    }
+
+    @Named("mapStringToRole")
+    default Role mapStringToRole(String role) {
+        return role != null ? Role.valueOf(role) : null;
     }
 }

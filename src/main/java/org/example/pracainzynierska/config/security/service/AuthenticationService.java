@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 @Service
@@ -37,6 +38,10 @@ public class AuthenticationService {
         user.setRoles(Collections.singleton(Role.ROLE_USER));
         user.setGender(input.gender());
         user.setDateOfBirth(input.dateOfBirth());
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
+        user.setCreatedBy(user);
+        user.setModifiedBy(user);
 
         userRepository.save(user);
         return new SignUpResponse("User created successfully");
