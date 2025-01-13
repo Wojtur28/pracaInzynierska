@@ -1,10 +1,7 @@
 package org.example.pracainzynierska.core.entities.user;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.pracainzynierska.core.entities.BaseEntity;
 import org.example.pracainzynierska.core.entities.gameRating.GameRatingEntity;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,6 +20,7 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class UserEntity extends BaseEntity implements UserDetails {
 
     private String email;
