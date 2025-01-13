@@ -53,7 +53,7 @@ public class AuthenticationService {
         UserEntity authenticatedUser = userRepository.findByEmail(input.email())
                 .orElseThrow();
 
-        String jwtToken = jwtService.generateToken(authenticatedUser);
+        String jwtToken = jwtService.generateToken(authenticatedUser, authenticatedUser.getId());
 
         return new SignInResponse(jwtToken, Math.toIntExact(jwtService.getExpirationTime()));
     }

@@ -5,7 +5,9 @@ import com.example.model.CreateGameRating;
 import com.example.model.GameRating;
 import lombok.AllArgsConstructor;
 import org.example.pracainzynierska.core.usecase.rating.CreateGameRatingUseCase;
+import org.example.pracainzynierska.core.usecase.rating.DeleteGameRatingUseCase;
 import org.example.pracainzynierska.core.usecase.rating.GetGameRatingsUseCase;
+import org.example.pracainzynierska.core.usecase.rating.UpdateGameRatingUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +23,8 @@ public class GameRatingController implements GameRatingsApi {
 
     private final GetGameRatingsUseCase getGameRatingsUseCase;
     private final CreateGameRatingUseCase createGameRatingUseCase;
+    private final UpdateGameRatingUseCase updateGameRatingUseCase;
+    private final DeleteGameRatingUseCase deleteGameRatingUseCase;
 
     @Override
     public ResponseEntity<List<GameRating>> getGameRatings(
@@ -38,5 +42,20 @@ public class GameRatingController implements GameRatingsApi {
         return ResponseEntity.ok(createGameRatingUseCase.createRating(gameId, createGameRating));
     }
 
+    @Override
+    public ResponseEntity<GameRating> updateGameRating(
+            @PathVariable("gameId") UUID gameId,
+            @PathVariable("ratingId") UUID ratingId,
+            @RequestBody GameRating rating) {
+        return ResponseEntity.ok(updateGameRatingUseCase.updateGameRating(ratingId, rating));
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteGameRating(
+            @PathVariable("gameId") UUID gameId,
+            @PathVariable("ratingId") UUID ratingId) {
+        deleteGameRatingUseCase.deleteGameRating(ratingId);
+        return ResponseEntity.noContent().build();
+    }
 
 }
