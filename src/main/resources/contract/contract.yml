@@ -728,6 +728,106 @@ paths:
         '401':
           description: Unauthorized
 
+  /reports:
+    get:
+      summary: Retrieve paginated list of reports
+      operationId: getReports
+      tags:
+        - report
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Paginated list of reports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Report'
+
+    post:
+        summary: Create a new report
+        operationId: createReport
+        tags:
+            - report
+        security:
+            - bearerAuth: [ ]
+        requestBody:
+            description: Report details
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Report'
+        responses:
+            '201':
+              description: Report successfully created
+              content:
+                application/json:
+                  schema:
+                      $ref: '#/components/schemas/Report'
+
+  /reports/{reportId}:
+    get:
+      summary: Retrieve a specific report by ID
+      operationId: getReport
+      tags:
+        - report
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: reportId
+          in: path
+          description: ID of the report to retrieve
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Report details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        '404':
+          description: Report not found
+
+    delete:
+      summary: Delete a specific report by ID
+      operationId: deleteReport
+      tags:
+          - report
+      security:
+          - bearerAuth: [ ]
+      parameters:
+          - name: reportId
+            in: path
+            description: ID of the report to delete
+            required: true
+            schema:
+              type: string
+              format: uuid
+      responses:
+          '204':
+              description: Report successfully deleted
+          '404':
+              description: Report not found
+
 
 components:
   securitySchemes:
@@ -1081,3 +1181,48 @@ components:
               description: List of platforms supported by the game.
               items:
                 $ref: '#/components/schemas/Platform'
+
+    Report:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the report.
+        name:
+          type: string
+          description: Name of the report.
+        startDate:
+          type: string
+          format: date
+          description: Start date of the report.
+        endDate:
+          type: string
+          format: date
+          description: End date of the report.
+        reportStatus:
+          type: string
+          description: Status of the report.
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the report was created.
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the report was last updated.
+        steamGames:
+          type: array
+          description: List of Steam games included in the report.
+          items:
+              $ref: '#/components/schemas/SteamGame'
+        gameRatings:
+          type: array
+          description: List of game ratings included in the report.
+          items:
+              $ref: '#/components/schemas/GameRating'
+        users:
+          type: array
+          description: List of users included in the report.
+          items:
+              $ref: '#/components/schemas/User'
