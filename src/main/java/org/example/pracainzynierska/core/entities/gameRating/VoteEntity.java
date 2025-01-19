@@ -26,4 +26,8 @@ public class VoteEntity extends BaseEntity {
 
     @Column(name = "votable_id", nullable = false)
     private UUID votableId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "votable_type", nullable = false)
+    private VotableType votableType;
 }

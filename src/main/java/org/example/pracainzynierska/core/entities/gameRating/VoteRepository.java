@@ -12,10 +12,12 @@ import java.util.UUID;
 @Repository
 public interface VoteRepository extends JpaRepository<VoteEntity, UUID> {
 
-    boolean existsByUser_IdAndVotableId(UUID userId, UUID votableId);
+    boolean existsByUser_IdAndVotableIdAndVotableType(UUID userId, UUID votableId, VotableType votableType);
 
     @Query("SELECT v.voteType AS type, COUNT(v) AS count " +
-            "FROM votes v WHERE v.votableId = :votableId GROUP BY v.voteType")
-    List<Tuple> countVotesByVotableId(@Param("votableId") UUID votableId);
-
+            "FROM votes v " +
+            "WHERE v.votableId = :votableId AND v.votableType = :votableType " +
+            "GROUP BY v.voteType")
+    List<Tuple> countVotesByVotableIdAndVotableType(@Param("votableId") UUID votableId,
+                                                    @Param("votableType") VotableType votableType);
 }
