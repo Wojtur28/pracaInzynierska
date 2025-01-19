@@ -2,6 +2,7 @@ package org.example.pracainzynierska.web.entrypoint;
 
 import com.example.api.ReportApi;
 import com.example.model.Report;
+import com.example.model.ReportDetails;
 import lombok.AllArgsConstructor;
 import org.example.pracainzynierska.core.usecase.report.CreateReportUseCase;
 import org.example.pracainzynierska.core.usecase.report.DeleteReportUseCase;
@@ -33,7 +34,7 @@ public class ReportController implements ReportApi {
     }
 
     @Override
-    public ResponseEntity<Report> getReport(@PathVariable UUID reportId) {
+    public ResponseEntity<ReportDetails> getReport(@PathVariable UUID reportId) {
         return ResponseEntity.ok(getReportUseCase.getReport(reportId));
     }
 

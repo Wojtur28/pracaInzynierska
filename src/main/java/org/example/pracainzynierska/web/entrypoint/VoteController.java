@@ -4,6 +4,7 @@ import com.example.api.VotesApi;
 import com.example.model.Vote;
 import com.example.model.VoteCount;
 import lombok.AllArgsConstructor;
+import org.example.pracainzynierska.core.entities.gameRating.VotableType;
 import org.example.pracainzynierska.core.usecase.rating.vote.VoteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,25 +20,22 @@ public class VoteController implements VotesApi {
     private final VoteService voteService;
 
     @Override
-    public ResponseEntity<Void> voteOnGameRating(@PathVariable("ratingId") UUID ratingId, @RequestBody Vote vote) {
-        voteService.vote(ratingId, vote.getVoteType());
+    public ResponseEntity<Void> vote(
+            @PathVariable("votableType") String votableTypeStr,
+            @PathVariable("votableId") UUID votableId,
+            @RequestBody Vote vote) {
+        VotableType votableType = VotableType.valueOf(votableTypeStr.toUpperCase());
+        voteService.vote(votableId, vote.getVoteType(), votableType);
         return ResponseEntity.ok().build();
     }
 
     @Override
-    public ResponseEntity<Void> voteOnGameRatingAnswer(@PathVariable("answerId") UUID answerId, @RequestBody Vote vote) {
-        voteService.vote(answerId, vote.getVoteType());
-        return ResponseEntity.ok().build();
-    }
-
-    @Override
-    public ResponseEntity<VoteCount> getVotesForGameRating(@PathVariable("ratingId") UUID ratingId) {
-        return ResponseEntity.ok(voteService.countVotes(ratingId));
-    }
-
-    @Override
-    public ResponseEntity<VoteCount> getVotesForGameRatingAnswer(@PathVariable("answerId") UUID answerId) {
-        return ResponseEntity.ok(voteService.countVotes(answerId));
+    public ResponseEntity<VoteCount> getVoteCount(
+            @PathVariable("votableType") String votableTypeStr,
+            @PathVariable("votableId") UUID votableId) {
+        VotableType votableType = VotableType.valueOf(votableTypeStr.toUpperCase());
+        VoteCount voteCount = voteService.countVotes(votableId, votableType);
+        return ResponseEntity.ok(voteCount);
     }
 
 }

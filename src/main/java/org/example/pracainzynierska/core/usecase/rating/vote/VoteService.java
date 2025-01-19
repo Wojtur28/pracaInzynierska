@@ -4,6 +4,7 @@ import com.example.model.VoteCount;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Tuple;
 import lombok.AllArgsConstructor;
+import org.example.pracainzynierska.core.entities.gameRating.VotableType;
 import org.example.pracainzynierska.core.entities.gameRating.VoteEntity;
 import org.example.pracainzynierska.core.entities.gameRating.VoteRepository;
 import org.example.pracainzynierska.core.entities.gameRating.VoteType;
@@ -25,12 +26,12 @@ public class VoteService {
     private final VoteRepository voteRepository;
     private final UserRepository userRepository;
 
-    public void vote(UUID votableId, String voteType) {
-
-        UserEntity user = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+    public void vote(UUID votableId, String voteType, VotableType votableType) {
+        UserEntity user = userRepository.findByEmail(
+                        SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        if (voteRepository.existsByUser_IdAndVotableId(user.getId(), votableId)) {
+        if (voteRepository.existsByUser_IdAndVotableIdAndVotableType(user.getId(), votableId, votableType)) {
             throw new UserAlreadyVotedException("User has already voted on this item");
         }
 
@@ -38,12 +39,13 @@ public class VoteService {
         vote.setUser(user);
         vote.setVotableId(votableId);
         vote.setVoteType(VoteType.valueOf(voteType.toUpperCase()));
+        vote.setVotableType(votableType);
 
         voteRepository.save(vote);
     }
 
-    public VoteCount countVotes(UUID votableId) {
-        List<Tuple> results = voteRepository.countVotesByVotableId(votableId);
+    public VoteCount countVotes(UUID votableId, VotableType votableType) {
+        List<Tuple> results = voteRepository.countVotesByVotableIdAndVotableType(votableId, votableType);
 
         Map<VoteType, Long> counts = results.stream()
                 .collect(Collectors.toMap(
