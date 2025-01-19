@@ -2,11 +2,10 @@ package org.example.pracainzynierska.core.usecase.report;
 
 import com.example.model.Report;
 import lombok.AllArgsConstructor;
-import org.example.pracainzynierska.core.entities.raport.ReportRepository;
-import org.example.pracainzynierska.core.entities.raport.ReportStatus;
-import org.example.pracainzynierska.core.entities.steam.game.SteamGameRepository;
+import org.example.pracainzynierska.core.entities.report.ReportEntity;
+import org.example.pracainzynierska.core.entities.report.ReportRepository;
+import org.example.pracainzynierska.core.entities.report.ReportStatus;
 import org.example.pracainzynierska.mapper.ReportMapper;
-import org.example.pracainzynierska.mapper.SteamGameMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
@@ -23,10 +22,11 @@ public class CreateReportUseCase {
 
         report.setReportStatus(String.valueOf(ReportStatus.IN_PROGRESS));
 
-        Report savedReport = reportMapper.toDto(reportRepository.save(reportMapper.toEntity(report)));
+        ReportEntity entity = reportMapper.toEntity(report);
+        ReportEntity savedEntity = reportRepository.save(entity);
 
-        updateReportStatusUseCase.updateReportStatusAsync(String.valueOf(savedReport.getId()));
+        updateReportStatusUseCase.updateReportStatusAsync(String.valueOf(savedEntity.getId()), savedEntity.getReportType());
 
-        return savedReport;
+        return reportMapper.toDto(savedEntity);
     }
 }

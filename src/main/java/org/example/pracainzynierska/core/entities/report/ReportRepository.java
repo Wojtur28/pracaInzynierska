@@ -1,4 +1,4 @@
-package org.example.pracainzynierska.core.entities.raport;
+package org.example.pracainzynierska.core.entities.report;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package org.example.pracainzynierska.core.entities.raport;
+package org.example.pracainzynierska.core.entities.report;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,6 +31,10 @@ public class ReportEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReportStatus reportStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ReportType reportType;
 
     @ManyToMany
     @JoinTable(
