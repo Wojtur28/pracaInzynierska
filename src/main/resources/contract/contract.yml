@@ -486,18 +486,25 @@ paths:
             '404':
                 description: Rating or answer not found
 
-  /votes/ratings/{ratingId}:
+  /votes/{votableType}/{votableId}:
     patch:
-      summary: Vote on a game rating
-      operationId: voteOnGameRating
+      summary: Vote on a game rating or answer
+      operationId: vote
       tags:
         - Votes
       security:
         - bearerAuth: [ ]
       parameters:
-        - name: ratingId
+        - name: votableType
           in: path
-          description: ID of the game rating to vote on
+          description: Type of the votable item, e.g. "RATING" or "ANSWER"
+          required: true
+          schema:
+            type: string
+            enum: [ RATING, ANSWER ]
+        - name: votableId
+          in: path
+          description: ID of the votable item to vote on
           required: true
           schema:
             type: string
@@ -511,96 +518,44 @@ paths:
               $ref: '#/components/schemas/Vote'
       responses:
         '200':
-          description: Successfully voted on the game rating
+          description: Successfully voted on the item
         '404':
-          description: Game rating not found
+          description: Item not found
         '400':
           description: Invalid vote type
 
-  /votes/answers/{answerId}:
-    patch:
-      summary: Vote on a game rating answer
-      operationId: voteOnGameRatingAnswer
-      tags:
-        - Votes
-      security:
-        - bearerAuth: [ ]
-      parameters:
-        - name: answerId
-          in: path
-          description: ID of the game rating answer to vote on
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        description: Vote details (upvote or downvote)
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Vote'
-      responses:
-        '200':
-          description: Successfully voted on the game rating answer
-        '404':
-          description: Game rating answer not found
-        '400':
-          description: Invalid vote type
-
-  /votes/ratings/{ratingId}/count:
+  /votes/{votableType}/{votableId}/count:
     get:
-      summary: Get vote counts for a game rating
-      operationId: getVotesForGameRating
+      summary: Get vote counts for a game rating or answer
+      operationId: getVoteCount
       tags:
         - Votes
       security:
         - bearerAuth: [ ]
       parameters:
-        - name: ratingId
+        - name: votableType
           in: path
-          description: ID of the game rating to retrieve vote counts for
+          description: Type of the votable item, e.g. "RATING" or "ANSWER"
+          required: true
+          schema:
+            type: string
+            enum: [ RATING, ANSWER ]
+        - name: votableId
+          in: path
+          description: ID of the votable item to retrieve vote counts for
           required: true
           schema:
             type: string
             format: uuid
       responses:
         '200':
-          description: Vote counts for the game rating
+          description: Vote counts for the item
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/VoteCount'
         '404':
-          description: Game rating not found
-
-  /votes/answers/{answerId}/count:
-    get:
-      summary: Get vote counts for a game rating answer
-      operationId: getVotesForGameRatingAnswer
-      tags:
-        - Votes
-      security:
-        - bearerAuth: [ ]
-      parameters:
-        - name: answerId
-          in: path
-          description: ID of the game rating answer to retrieve vote counts for
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: Vote counts for the game rating answer
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/VoteCount'
-        '404':
-          description: Game rating answer not found
-        '400':
-          description: Invalid vote type
+          description: Item not found
 
   /users:
     get:
@@ -727,6 +682,118 @@ paths:
                 $ref: '#/components/schemas/User'
         '401':
           description: Unauthorized
+
+  /reports:
+    get:
+      summary: Retrieve paginated list of reports
+      operationId: getReports
+      tags:
+        - report
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Paginated list of reports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Report'
+
+    post:
+        summary: Create a new report
+        operationId: createReport
+        tags:
+            - report
+        security:
+            - bearerAuth: [ ]
+        requestBody:
+            description: Report details
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Report'
+        responses:
+            '201':
+              description: Report successfully created
+              content:
+                application/json:
+                  schema:
+                      $ref: '#/components/schemas/Report'
+
+  /reports/refresh:
+    post:
+      summary: Refresh reports cache
+      operationId: refreshReportsCache
+      tags:
+        - report
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Cache successfully refreshed
+
+  /reports/{reportId}:
+    get:
+      summary: Retrieve a specific report by ID
+      operationId: getReport
+      tags:
+        - report
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: reportId
+          in: path
+          description: ID of the report to retrieve
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Report details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportDetails'
+        '404':
+          description: Report not found
+
+    delete:
+      summary: Delete a specific report by ID
+      operationId: deleteReport
+      tags:
+          - report
+      security:
+          - bearerAuth: [ ]
+      parameters:
+          - name: reportId
+            in: path
+            description: ID of the report to delete
+            required: true
+            schema:
+              type: string
+              format: uuid
+      responses:
+          '204':
+              description: Report successfully deleted
+          '404':
+              description: Report not found
 
 
 components:
@@ -1081,3 +1148,89 @@ components:
               description: List of platforms supported by the game.
               items:
                 $ref: '#/components/schemas/Platform'
+
+    Report:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the report.
+        name:
+          type: string
+          description: Name of the report.
+        startDate:
+          type: string
+          format: date
+          description: Start date of the report.
+        endDate:
+          type: string
+          format: date
+          description: End date of the report.
+        reportStatus:
+          type: string
+          description: Status of the report.
+        reportType:
+          type: string
+          description: Type of the report.
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the report was created.
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the report was last updated.
+        steamGames:
+          type: array
+          description: List of Steam games included in the report.
+          items:
+              $ref: '#/components/schemas/SteamGame'
+        gameRatings:
+          type: array
+          description: List of game ratings included in the report.
+          items:
+            $ref: '#/components/schemas/GameRating'
+
+    ReportDetails:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the report.
+        name:
+          type: string
+          description: Name of the report.
+        startDate:
+          type: string
+          format: date
+          description: Start date of the report.
+        endDate:
+          type: string
+          format: date
+          description: End date of the report.
+        reportStatus:
+          type: string
+          description: Status of the report.
+        reportType:
+          type: string
+          description: Type of the report.
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the report was created.
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the report was last updated.
+        steamGames:
+          type: array
+          description: List of Steam games included in the report.
+          items:
+            $ref: '#/components/schemas/SteamGame'
+        gameRatings:
+          type: array
+          description: List of game ratings included in the report.
+          items:
+              $ref: '#/components/schemas/GameRating'

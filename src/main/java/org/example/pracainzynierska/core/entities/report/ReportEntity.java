@@ -1,9 +1,6 @@
-package org.example.pracainzynierska.core.entities.raport;
+package org.example.pracainzynierska.core.entities.report;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,9 +21,20 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class ReportEntity extends BaseEntity {
 
+    @Column(nullable = false)
+    private String name;
+
     private LocalDate startDate;
 
     private LocalDate endDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ReportStatus reportStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ReportType reportType;
 
     @ManyToMany
     @JoinTable(
