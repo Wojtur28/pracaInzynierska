@@ -29,13 +29,13 @@ public abstract class BaseEntity {
     private UUID id;
 
     @CreatedBy
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "createdBy", nullable = false)
     @EqualsAndHashCode.Exclude
     private UserEntity createdBy;
 
     @LastModifiedBy
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "modifiedBy")
     @EqualsAndHashCode.Exclude
     private UserEntity modifiedBy;

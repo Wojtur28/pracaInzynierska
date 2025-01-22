@@ -9,6 +9,9 @@ import org.example.pracainzynierska.core.entities.BaseEntity;
 import org.example.pracainzynierska.core.entities.user.UserEntity;
 import org.example.pracainzynierska.core.entities.steam.game.SteamGameEntity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @EqualsAndHashCode(callSuper = true)
 @Entity(name = "game_ratings")
 @Data
@@ -27,5 +30,8 @@ public class GameRatingEntity extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @OneToMany(mappedBy = "gameRatingEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<GameRatingAnswerEntity> answers = new HashSet<>();
 }
 
