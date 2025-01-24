@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +32,14 @@ public class GetSteamGamesWithDetails {
                 .and(SteamGameSpecifications.hasName(search));
 
         List<SteamGameEntity> games = steamGameRepository.findAll(spec, pageRequest).getContent();
+
+        return games.stream()
+                .map(steamGameWithDetailsMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<SteamGameWithDetails> getDetailsForGameIds(List<UUID> gameIds) {
+        List<SteamGameEntity> games = steamGameRepository.findAllById(gameIds);
 
         return games.stream()
                 .map(steamGameWithDetailsMapper::toDto)

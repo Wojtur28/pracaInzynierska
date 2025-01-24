@@ -296,7 +296,7 @@ paths:
 
   /games/details:
     get:
-      summary: Retrieve paginated list of Steam games with details
+      summary: Retrieve paginated list of Steam games with details or details for specific game IDs
       operationId: getSteamGamesWithDetails
       tags:
         - SteamGames
@@ -343,9 +343,18 @@ paths:
           schema:
             type: string
             description: Search games by title
+        - name: gameIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+            description: Retrieve details for specific game IDs
       responses:
         '200':
-          description: Paginated list of Steam games with details
+          description: Paginated list of Steam games with details or details for specific game IDs
           content:
             application/json:
               schema:
@@ -358,6 +367,7 @@ paths:
           description: Forbidden
         '500':
           description: Internal Server Error
+
 
   /ratings/{ratingId}/answers:
     get:

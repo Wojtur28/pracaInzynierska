@@ -37,8 +37,27 @@ public class SteamGameController implements SteamGamesApi {
     }
 
     @Override
-    public ResponseEntity<List<SteamGameWithDetails>> getSteamGamesWithDetails(@RequestParam Integer page, @RequestParam Integer size, @RequestParam(required = false) String platform, @RequestParam(required = false) List<String> categories, @RequestParam(required = false) List<String> genres, @RequestParam(required = false) String search) {
-        return ResponseEntity.ok(getSteamGamesWithDetails.getSteamGamesWithDetails(page, size, platform, categories, genres, search));
+    public ResponseEntity<List<SteamGameWithDetails>> getSteamGamesWithDetails(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false) String platform,
+            @RequestParam(required = false) List<String> categories,
+            @RequestParam(required = false) List<String> genres,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) List<UUID> gameIds) {
+
+        if (gameIds != null && !gameIds.isEmpty()) {
+            return ResponseEntity.ok(getSteamGamesWithDetails.getDetailsForGameIds(gameIds));
+        }
+
+        return ResponseEntity.ok(getSteamGamesWithDetails.getSteamGamesWithDetails(
+                page != null ? page : 0,
+                size != null ? size : 10,
+                platform,
+                categories,
+                genres,
+                search
+        ));
     }
 
     @Override
