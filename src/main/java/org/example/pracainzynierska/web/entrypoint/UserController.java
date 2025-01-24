@@ -1,6 +1,7 @@
 package org.example.pracainzynierska.web.entrypoint;
 
 import com.example.api.UserApi;
+import com.example.model.UpdateUser;
 import com.example.model.User;
 import lombok.AllArgsConstructor;
 import org.example.pracainzynierska.core.usecase.user.DeleteUserUseCase;
@@ -10,6 +11,7 @@ import org.example.pracainzynierska.core.usecase.user.UpdateUserUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -44,6 +46,11 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<User> updateUser(@PathVariable("userId") UUID userId, User user) {
         return ResponseEntity.ok(updateUserUseCase.updateUser(userId, user));
+    }
+
+    @Override
+    public ResponseEntity<User> updateCurrentUser(@RequestBody UpdateUser user) {
+        return ResponseEntity.ok(updateUserUseCase.updateCurrentUser(user));
     }
 
     @Override

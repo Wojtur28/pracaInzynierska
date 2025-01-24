@@ -18,6 +18,7 @@ public class LibraryController implements LibraryApi {
     private final CreateLibraryItemUseCase createLibraryItemUseCase;
     private final UpdateLibraryItemStatusUseCase updateLibraryItemStatusUseCase;
     private final GetOrCreateLibraryUseCase getOrCreateLibraryUseCase;
+    private final DeleteLibraryItemUseCase deleteLibraryItemUseCase;
 
     @Override
     public ResponseEntity<Library> getOrCreateLibraryForCurrentUser() {
@@ -30,7 +31,14 @@ public class LibraryController implements LibraryApi {
     }
 
     @Override
-    public ResponseEntity<LibraryItem> updateLibraryItemStatus(@PathVariable("steamGameId") UUID steamGameId, UpdateLibraryItem body) {
+    public ResponseEntity<LibraryItem> updateLibraryItemStatus(@PathVariable("libraryItemId") UUID steamGameId, UpdateLibraryItem body) {
         return ResponseEntity.ok(updateLibraryItemStatusUseCase.updateLibraryItemStatus(steamGameId, body));
     }
+
+    @Override
+    public ResponseEntity<Void> deleteLibraryItem(@PathVariable("libraryItemId") UUID steamGameId) {
+        deleteLibraryItemUseCase.deleteLibraryItem(steamGameId);
+        return ResponseEntity.noContent().build();
+    }
+
 }

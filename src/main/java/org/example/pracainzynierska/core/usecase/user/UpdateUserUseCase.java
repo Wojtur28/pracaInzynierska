@@ -1,5 +1,6 @@
 package org.example.pracainzynierska.core.usecase.user;
 
+import com.example.model.UpdateUser;
 import com.example.model.User;
 import lombok.AllArgsConstructor;
 import org.example.pracainzynierska.core.entities.user.Role;
@@ -7,6 +8,7 @@ import org.example.pracainzynierska.core.entities.user.UserEntity;
 import org.example.pracainzynierska.core.entities.user.UserRepository;
 import org.example.pracainzynierska.exception.UserNotFoundException;
 import org.example.pracainzynierska.mapper.UserMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -36,4 +38,17 @@ public class UpdateUserUseCase {
 
         return userMapper.toDto(userRepository.save(userEntity));
     }
+
+    public User updateCurrentUser(UpdateUser user) {
+        UserEntity userEntity = userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        userEntity.setFirstName(user.getFirstName());
+        userEntity.setLastName(user.getLastName());
+        userEntity.setGender(userMapper.mapStringToGender(user.getGender()));
+
+
+        return userMapper.toDto(userRepository.save(userEntity));
+    }
+
 }

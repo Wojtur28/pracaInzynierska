@@ -1,5 +1,6 @@
 package org.example.pracainzynierska.mapper;
 
+import com.example.model.UpdateUser;
 import com.example.model.User;
 import org.example.pracainzynierska.core.entities.user.Gender;
 import org.example.pracainzynierska.core.entities.user.Role;
@@ -21,6 +22,14 @@ public interface UserMapper {
     UserEntity toEntity(User user);
 
     List<User> toDto(List<UserEntity> userEntities);
+
+    UpdateUser toUpdateUserDto(UserEntity userEntity);
+
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "email", ignore = true)
+    @Mapping(target = "dateOfBirth", ignore = true)
+    User toDto(UpdateUser user);
 
     @Named("mapGenderToString")
     default String mapGenderToString(Gender gender) {
