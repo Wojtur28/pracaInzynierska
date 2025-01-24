@@ -8,6 +8,7 @@ import org.example.pracainzynierska.config.security.dto.SignUpUser;
 import org.example.pracainzynierska.core.entities.user.Role;
 import org.example.pracainzynierska.core.entities.user.UserEntity;
 import org.example.pracainzynierska.core.entities.user.UserRepository;
+import org.example.pracainzynierska.core.usecase.library.CreateLibraryUseCase;
 import org.example.pracainzynierska.exception.UserAlreadyExistsException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,12 +25,13 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final CreateLibraryUseCase createLibraryUseCase;
+
 
     public SignUpResponse signup(SignUpUser input) {
         if (userRepository.findByEmail(input.email()).isPresent()) {
             throw new UserAlreadyExistsException("User with this email already exists");
         }
-
         UserEntity user = new UserEntity();
         user.setEmail(input.email());
         user.setFirstName(input.firstName());
@@ -43,7 +45,8 @@ public class AuthenticationService {
         user.setCreatedBy(user);
         user.setModifiedBy(user);
 
-        userRepository.save(user);
+        UserEntity savedUser = userRepository.save(user);
+        createLibraryUseCase.createLibraryForUser(savedUser);
         return new SignUpResponse("User created successfully");
     }
 

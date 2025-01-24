@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class EvictReportsCacheUseCase {
 
-    @CacheEvict(value = "reportsCache", allEntries = true)
-    public void evictCache() {
-
+    @CacheEvict(value = "reports", allEntries = true)
+    public void evictAllReportsCache() {
     }
 }

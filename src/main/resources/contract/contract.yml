@@ -296,7 +296,7 @@ paths:
 
   /games/details:
     get:
-      summary: Retrieve paginated list of Steam games with details
+      summary: Retrieve paginated list of Steam games with details or details for specific game IDs
       operationId: getSteamGamesWithDetails
       tags:
         - SteamGames
@@ -343,9 +343,18 @@ paths:
           schema:
             type: string
             description: Search games by title
+        - name: gameIds
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+            description: Retrieve details for specific game IDs
       responses:
         '200':
-          description: Paginated list of Steam games with details
+          description: Paginated list of Steam games with details or details for specific game IDs
           content:
             application/json:
               schema:
@@ -358,6 +367,7 @@ paths:
           description: Forbidden
         '500':
           description: Internal Server Error
+
 
   /ratings/{ratingId}/answers:
     get:
@@ -795,6 +805,78 @@ paths:
           '404':
               description: Report not found
 
+  /library:
+    get:
+      summary: Retrieve the library for the current user (or create one if it does not exist)
+      operationId: getOrCreateLibraryForCurrentUser
+      tags:
+        - Library
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Library details of the current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Library'
+        '404':
+          description: Library not found
+
+  /library/items:
+    post:
+      summary: Add a game to the current user's library with a status
+      operationId: addLibraryItem
+      tags:
+        - Library
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: Details for adding a game to library
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLibraryItem'
+      responses:
+        '201':
+          description: Game successfully added to library
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LibraryItem'
+  /library/items/{steamGameId}:
+    put:
+      summary: Update the status of a game in the current user's library
+      operationId: updateLibraryItemStatus
+      tags:
+        - Library
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: steamGameId
+          in: path
+          description: ID of the Steam game to update the status for
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Updated status for the library item
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLibraryItem'
+      responses:
+        '200':
+          description: Library item status successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LibraryItem'
+        '404':
+          description: Library item not found
 
 components:
   securitySchemes:
@@ -803,6 +885,7 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+
     User:
       type: object
       properties:
@@ -1234,3 +1317,57 @@ components:
           description: List of game ratings included in the report.
           items:
               $ref: '#/components/schemas/GameRating'
+
+    Library:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        libraryItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/LibraryItem'
+
+    LibraryItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        steamGame:
+          $ref: '#/components/schemas/SteamGame'
+        gameStatus:
+          type: string
+          description: Status of the game in the library.
+          enum: [ NOT_STARTED, IN_PROGRESS, COMPLETED, DROPPED ]
+
+    CreateLibrary:
+      type: object
+      properties:
+        dummy:
+          type: string
+          description: Empty payload
+
+    CreateLibraryItem:
+      type: object
+      properties:
+        steamGameId:
+          type: string
+          format: uuid
+          description: ID of the Steam game to add to library.
+        gameStatus:
+          type: string
+          description: Status of the game.
+          enum: [ NOT_STARTED, IN_PROGRESS, COMPLETED, DROPPED ]
+
+    UpdateLibraryItem:
+      type: object
+      properties:
+        gameStatus:
+          type: string
+          description: New status of the game.
+          enum: [ NOT_STARTED, IN_PROGRESS, COMPLETED, DROPPED ]

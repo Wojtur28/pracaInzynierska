@@ -45,12 +45,12 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<GameRatingEntity> userGameRatingEntities = new HashSet<>();
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_voted_ratings", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "rating_id")
     private Set<UUID> votedRatings = new HashSet<>();
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_voted_answers", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "answer_id")
     private Set<UUID> votedAnswers = new HashSet<>();

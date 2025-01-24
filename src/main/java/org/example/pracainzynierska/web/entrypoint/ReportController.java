@@ -4,10 +4,7 @@ import com.example.api.ReportApi;
 import com.example.model.Report;
 import com.example.model.ReportDetails;
 import lombok.AllArgsConstructor;
-import org.example.pracainzynierska.core.usecase.report.CreateReportUseCase;
-import org.example.pracainzynierska.core.usecase.report.DeleteReportUseCase;
-import org.example.pracainzynierska.core.usecase.report.GetReportUseCase;
-import org.example.pracainzynierska.core.usecase.report.GetReportsUseCase;
+import org.example.pracainzynierska.core.usecase.report.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +23,7 @@ public class ReportController implements ReportApi {
     private final GetReportUseCase getReportUseCase;
     private final DeleteReportUseCase deleteReportUseCase;
     private final CreateReportUseCase createReportUseCase;
+    private final EvictReportsCacheUseCase evictReportsCacheUseCase;
 
     @Override
     public ResponseEntity<List<Report>> getReports(@RequestParam(defaultValue = "0") Integer page,
@@ -46,6 +44,12 @@ public class ReportController implements ReportApi {
     @Override
     public ResponseEntity<Void> deleteReport(@PathVariable UUID reportId) {
         deleteReportUseCase.deleteReport(reportId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> refreshReportsCache() {
+        evictReportsCacheUseCase.evictAllReportsCache();
         return ResponseEntity.noContent().build();
     }
 }
