@@ -24,7 +24,7 @@ public class UpdateLibraryItemStatusUseCase {
     private final UserRepository userRepository;
     private final LibraryItemMapper libraryItemMapper;
 
-    public LibraryItem updateLibraryItemStatus(UUID steamGameId, UpdateLibraryItem updateLibraryItem) {
+    public LibraryItem updateLibraryItemStatus(UUID libraryItemId, UpdateLibraryItem updateLibraryItem) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity user =
                 userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -33,7 +33,7 @@ public class UpdateLibraryItemStatusUseCase {
                 .orElseThrow(() -> new LibraryNotFoundException("Library not found"));
 
         LibraryItemEntity item = library.getLibraryItems().stream()
-                .filter(i -> i.getSteamGameEntity().getId().equals(steamGameId))
+                .filter(i -> i.getSteamGameEntity().getId().equals(libraryItemId))
                 .findFirst()
                 .orElseThrow(() -> new LibraryItemNotFoundException("Item not found"));
 

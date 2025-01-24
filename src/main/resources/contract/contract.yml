@@ -693,6 +693,30 @@ paths:
         '401':
           description: Unauthorized
 
+    put:
+        summary: Update the current user
+        operationId: updateCurrentUser
+        tags:
+            - user
+        security:
+            - bearerAuth: [ ]
+        requestBody:
+            description: User details
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/UpdateUser'
+        responses:
+            '200':
+              description: User successfully updated
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/User'
+            '401':
+              description: Unauthorized
+
   /reports:
     get:
       summary: Retrieve paginated list of reports
@@ -845,7 +869,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LibraryItem'
-  /library/items/{steamGameId}:
+
+  /library/items/{libraryItemId}:
     put:
       summary: Update the status of a game in the current user's library
       operationId: updateLibraryItemStatus
@@ -854,9 +879,9 @@ paths:
       security:
         - bearerAuth: [ ]
       parameters:
-        - name: steamGameId
+        - name: libraryItemId
           in: path
-          description: ID of the Steam game to update the status for
+          description: ID of the library item to update the status for
           required: true
           schema:
             type: string
@@ -877,6 +902,28 @@ paths:
                 $ref: '#/components/schemas/LibraryItem'
         '404':
           description: Library item not found
+
+    delete:
+      summary: Delete a game from the current user's library
+      operationId: deleteLibraryItem
+      tags:
+        - Library
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: libraryItemId
+          in: path
+          description: ID of the library item to delete from the library
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Library item successfully deleted
+        '404':
+          description: Library item not found
+
 
 components:
   securitySchemes:
@@ -906,6 +953,16 @@ components:
           type: array
           items:
             type: string
+
+    UpdateUser:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        gender:
+          type: string
 
     SteamGame:
       type: object
