@@ -29,13 +29,11 @@ public class UpdateLibraryItemStatusUseCase {
         UserEntity user =
                 userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        LibraryEntity library = libraryRepository.findByUser_Id(user.getId())
+        libraryRepository.findByUser_Id(user.getId())
                 .orElseThrow(() -> new LibraryNotFoundException("Library not found"));
 
-        LibraryItemEntity item = library.getLibraryItems().stream()
-                .filter(i -> i.getSteamGameEntity().getId().equals(libraryItemId))
-                .findFirst()
-                .orElseThrow(() -> new LibraryItemNotFoundException("Item not found"));
+        LibraryItemEntity item = libraryItemRepository.findById(libraryItemId)
+                .orElseThrow(() -> new LibraryItemNotFoundException("Library item not found"));
 
         item.setGameStatus(GameStatus.valueOf(updateLibraryItem.getGameStatus().toString()));
         LibraryItemEntity updatedItem = libraryItemRepository.save(item);
