@@ -31,6 +31,9 @@ public class SecurityConfiguration {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/reset-password", "/request-password-reset").permitAll()
                         .requestMatchers("/actuator/**", "/monitor/**").permitAll()
+                        .requestMatchers("games/details", "/games/**").permitAll()
+                        .requestMatchers("/ratings/{ratingId}/answers").permitAll()
+                        .requestMatchers("/votes/{votableType}/{votableId}/count").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
