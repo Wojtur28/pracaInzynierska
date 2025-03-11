@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<Map<String, String>> handleJwtException(JwtException ex) {
         Map<String, String> response = new HashMap<>();
-        response.put("error", "Invalid or expired JWT token");
+        response.put(ex.getMessage(), "Invalid or expired JWT token.");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 

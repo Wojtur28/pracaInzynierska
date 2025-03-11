@@ -81,11 +81,11 @@ tasks.withType<Test> {
 }
 
 flyway {
-    url = "jdbc:postgresql://localhost:5432/pracainzynierska_db" // Replace with your DB URL
-    user = "postgres" // Replace with your DB username
-    password = "secret" // Replace with your DB password
-    schemas = arrayOf("public")// Replace with your schema if different
-    locations = arrayOf("filesystem:src/main/resources/db/migration") // Default Flyway migration location
+    url = "jdbc:postgresql://localhost:5432/pracainzynierska_db"
+    user = "postgres"
+    password = "secret"
+    schemas = arrayOf("public")
+    locations = arrayOf("filesystem:src/main/resources/db/migration")
 }
 
 val apiPackage = "com.example.api"
